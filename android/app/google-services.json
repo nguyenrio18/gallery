@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "106305782084",
+    "firebase_url": "https://holahoclai.firebaseio.com",
+    "project_id": "holahoclai",
+    "storage_bucket": "holahoclai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106305782084:android:c6a6df60eae57b04ff5711",
+        "android_client_info": {
+          "package_name": "com.fs8.holahoclai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106305782084-9g97d5r7e9ilmo43ov0uhbapulgtsh9f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fs8.holahoclai",
+            "certificate_hash": "6db6dfd22097ed2f7d3ee3ebffbd8743603f808b"
+          }
+        },
+        {
+          "client_id": "106305782084-ik1p8fr30uik65uioefq533kmd6jfott.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmIzheHIE4GsH6986CfQJtLvcK7orl2EQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106305782084-ik1p8fr30uik65uioefq533kmd6jfott.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

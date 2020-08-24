@@ -1,4 +1,4 @@
-package io.flutter.demo.gallery
+package com.fs8.holahoclai
 
 import io.flutter.embedding.android.FlutterActivity
 

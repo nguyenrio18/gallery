@@ -27,7 +27,7 @@ enum Environment { dev, prod }
 
 class Constants {
   static final Environment env = Environment.prod;
-  static final String words = 'wR6fnNz53SdXkKagMbDCnZ5av8i2';
+  static final String words = 'AYo5SWr5rNfpI6J0rkMRcteZpNI2';
   static final String version = '0.0.1';
   static final String urlApi = env == Environment.dev
       ? 'http://localhost:8686/api'
