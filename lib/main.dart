@@ -14,10 +14,23 @@ import 'package:gallery/l10n/gallery_localizations.dart';
 import 'package:gallery/pages/backdrop.dart';
 import 'package:gallery/pages/splash.dart';
 import 'package:gallery/themes/gallery_theme_data.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+Future<void> main() async {
+  await Hive.initFlutter();
+
   GoogleFonts.config.allowRuntimeFetching = false;
-  runApp(const GalleryApp());
+
+  var box = await Hive.openBox<String>('user');
+  // var box = Hive.box<String>('user');
+  var token = box.get('token');
+
+  if (token == null) {
+    runApp(const GalleryApp(initialRoute: '/login'));
+  } else {
+    runApp(const GalleryApp());
+  }
 }
 
 class GalleryApp extends StatelessWidget {
@@ -45,7 +58,7 @@ class GalleryApp extends StatelessWidget {
       child: Builder(
         builder: (context) {
           return MaterialApp(
-            title: 'Flutter Gallery',
+            title: 'HOLA',
             debugShowCheckedModeBanner: false,
             themeMode: GalleryOptions.of(context).themeMode,
             theme: GalleryThemeData.lightThemeData.copyWith(

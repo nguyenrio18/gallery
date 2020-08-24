@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/l10n/gallery_localizations.dart';
+// import 'package:gallery/l10n/gallery_localizations.dart';
 import 'package:gallery/studies/crane/backlayer.dart';
 import 'package:gallery/studies/crane/header_form.dart';
 
@@ -27,26 +27,30 @@ class _FlyFormState extends State<FlyForm> {
       fields: <HeaderFormField>[
         HeaderFormField(
           index: 0,
-          iconData: Icons.person,
-          title: GalleryLocalizations.of(context).craneFormTravelers,
+          iconData: Icons.credit_card, // Icons.person,
+          title: 'Loại bằng',
+          // GalleryLocalizations.of(context).craneFormTravelers,
           textController: travelerController,
         ),
         HeaderFormField(
           index: 1,
           iconData: Icons.place,
-          title: GalleryLocalizations.of(context).craneFormOrigin,
+          title: 'Địa điểm',
+          // GalleryLocalizations.of(context).craneFormOrigin,
           textController: countryDestinationController,
         ),
         HeaderFormField(
           index: 2,
-          iconData: Icons.airplanemode_active,
-          title: GalleryLocalizations.of(context).craneFormDestination,
+          iconData: Icons.drive_eta, // Icons.airplanemode_active,
+          title: 'Loại xe',
+          // GalleryLocalizations.of(context).craneFormDestination,
           textController: destinationController,
         ),
         HeaderFormField(
           index: 3,
           iconData: Icons.date_range,
-          title: GalleryLocalizations.of(context).craneFormDates,
+          title: 'Ngày bắt đầu',
+          // GalleryLocalizations.of(context).craneFormDates,
           textController: dateController,
         ),
       ],

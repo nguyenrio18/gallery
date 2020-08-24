@@ -73,11 +73,11 @@ extension GalleryDemoExtension on GalleryDemoCategory {
   String displayTitle(GalleryLocalizations localizations) {
     switch (this) {
       case GalleryDemoCategory.material:
-        return 'MATERIAL';
+        return 'SÂN TẬP & TRƯỜNG LÁI'; // 'MATERIAL';
       case GalleryDemoCategory.cupertino:
-        return 'CUPERTINO';
+        return 'THÔNG BÁO & CHAT'; // 'CUPERTINO';
       case GalleryDemoCategory.other:
-        return localizations.homeCategoryReference;
+        return 'GIÁO ÁN'; // localizations.homeCategoryReference;
       case GalleryDemoCategory.study:
     }
     return null;
@@ -155,8 +155,9 @@ Map<String, GalleryDemo> studies(GalleryLocalizations localizations) {
       studyId: 'rally',
     ),
     'crane': GalleryDemo(
-      title: 'Crane',
-      subtitle: localizations.craneDescription,
+      title: 'GIÁO VIÊN', // 'Crane',
+      subtitle: 'Tìm giáo viên dạy lái phù hợp',
+      // localizations.craneDescription,
       category: GalleryDemoCategory.study,
       studyId: 'crane',
     ),

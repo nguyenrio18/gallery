@@ -26,20 +26,23 @@ class _SleepFormState extends State<SleepForm> {
       fields: <HeaderFormField>[
         HeaderFormField(
           index: 0,
-          iconData: Icons.person,
-          title: GalleryLocalizations.of(context).craneFormTravelers,
+          iconData: Icons.credit_card, // Icons.person,
+          title: 'Loại bằng',
+          // GalleryLocalizations.of(context).craneFormTravelers,
           textController: travelerController,
         ),
         HeaderFormField(
           index: 1,
           iconData: Icons.date_range,
-          title: GalleryLocalizations.of(context).craneFormDates,
+          title: 'Ngày bắt đầu',
+          // GalleryLocalizations.of(context).craneFormDates,
           textController: dateController,
         ),
         HeaderFormField(
           index: 2,
-          iconData: Icons.hotel,
-          title: GalleryLocalizations.of(context).craneFormLocation,
+          iconData: Icons.drive_eta, // Icons.hotel,
+          title: 'Loại xe',
+          // GalleryLocalizations.of(context).craneFormLocation,
           textController: locationController,
         ),
       ],

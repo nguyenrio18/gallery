@@ -44,6 +44,23 @@ class HomePage extends StatelessWidget {
     final studyDemos = studies(localizations);
     final carouselCards = <Widget>[
       _CarouselCard(
+        demo: studyDemos['crane'],
+        asset: const AssetImage(
+          'assets/studies/starter_card.png',
+          // 'assets/studies/crane_card.png',
+          package: 'flutter_gallery_assets',
+        ),
+        assetColor: const Color(0xFFFBF6F8),
+        assetDark: const AssetImage(
+          'assets/studies/starter_card_dark.png',
+          // 'assets/studies/crane_card_dark.png',
+          package: 'flutter_gallery_assets',
+        ),
+        assetDarkColor: const Color(0xFF591946),
+        textColor: cranePurple700,
+        studyRoute: CraneApp.defaultRoute,
+      ),
+      _CarouselCard(
         demo: studyDemos['shrine'],
         asset: const AssetImage(
           'assets/studies/shrine_card.png',
@@ -72,21 +89,6 @@ class HomePage extends StatelessWidget {
         ),
         assetDarkColor: const Color(0xFF253538),
         studyRoute: RallyApp.loginRoute,
-      ),
-      _CarouselCard(
-        demo: studyDemos['crane'],
-        asset: const AssetImage(
-          'assets/studies/crane_card.png',
-          package: 'flutter_gallery_assets',
-        ),
-        assetColor: const Color(0xFFFBF6F8),
-        assetDark: const AssetImage(
-          'assets/studies/crane_card_dark.png',
-          package: 'flutter_gallery_assets',
-        ),
-        assetDarkColor: const Color(0xFF591946),
-        textColor: cranePurple700,
-        studyRoute: CraneApp.defaultRoute,
       ),
       _CarouselCard(
         demo: studyDemos['fortnightly'],
@@ -250,7 +252,8 @@ class _GalleryHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Header(
       color: Theme.of(context).colorScheme.primaryVariant,
-      text: GalleryLocalizations.of(context).homeHeaderGallery,
+      text: 'HOLA học lái',
+      // GalleryLocalizations.of(context).homeHeaderGallery,
     );
   }
 }
@@ -373,11 +376,11 @@ class _AnimatedHomePageState extends State<_AnimatedHomePage>
               controller: _animationController,
               child: CategoryListItem(
                 key: const PageStorageKey<GalleryDemoCategory>(
-                  GalleryDemoCategory.material,
+                  GalleryDemoCategory.cupertino,
                 ),
-                category: GalleryDemoCategory.material,
-                imageString: 'assets/icons/material/material.png',
-                demos: materialDemos(localizations),
+                category: GalleryDemoCategory.cupertino,
+                imageString: 'assets/icons/cupertino/cupertino.png',
+                demos: cupertinoDemos(localizations),
                 initiallyExpanded: isTestMode,
               ),
             ),
@@ -386,11 +389,11 @@ class _AnimatedHomePageState extends State<_AnimatedHomePage>
               controller: _animationController,
               child: CategoryListItem(
                 key: const PageStorageKey<GalleryDemoCategory>(
-                  GalleryDemoCategory.cupertino,
+                  GalleryDemoCategory.material,
                 ),
-                category: GalleryDemoCategory.cupertino,
-                imageString: 'assets/icons/cupertino/cupertino.png',
-                demos: cupertinoDemos(localizations),
+                category: GalleryDemoCategory.material,
+                imageString: 'assets/icons/material/material.png',
+                demos: materialDemos(localizations),
                 initiallyExpanded: isTestMode,
               ),
             ),

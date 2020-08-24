@@ -2598,6 +2598,13 @@ class _GalleryLocalizationsDelegate
 }
 
 Future<GalleryLocalizations> _lookupGalleryLocalizations(Locale locale) {
+  // TODO: FIXED LOCALE LANGUAGE CODE FOR "vi"
+  if (locale != null) {
+    return gallery_localizations_vi
+        .loadLibrary()
+        .then((dynamic _) => gallery_localizations_vi.GalleryLocalizationsVi());
+  }
+
   // Lookup logic when language+script codes are specified.
   switch (locale.languageCode) {
     case 'sr':

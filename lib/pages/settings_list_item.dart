@@ -82,6 +82,7 @@ class SettingsListItem<T> extends StatefulWidget {
     @required this.onOptionChanged,
     @required this.onTapSetting,
     @required this.isExpanded,
+    this.headerIcon = const Icon(Icons.arrow_drop_down),
   }) : super(key: key);
 
   final LinkedHashMap<T, DisplayOption> optionsMap;
@@ -90,6 +91,7 @@ class SettingsListItem<T> extends StatefulWidget {
   final ValueChanged<T> onOptionChanged;
   final Function onTapSetting;
   final bool isExpanded;
+  final Icon headerIcon;
 
   @override
   _SettingsListItemState createState() => _SettingsListItemState<T>();
@@ -178,6 +180,7 @@ class _SettingsListItemState<T> extends State<SettingsListItem<T>>
           title: widget.title,
           subtitle: widget.optionsMap[widget.selectedOption]?.title ?? '',
           onTap: () => widget.onTapSetting(),
+          icon: widget.headerIcon,
         ),
         Padding(
           padding: _childrenPadding.value,
@@ -263,6 +266,7 @@ class _CategoryHeader extends StatelessWidget {
     this.title,
     this.subtitle,
     this.onTap,
+    this.icon,
   }) : super(key: key);
 
   final EdgeInsetsGeometry margin;
@@ -273,6 +277,7 @@ class _CategoryHeader extends StatelessWidget {
   final Animation<double> subtitleHeight;
   final Animation<double> chevronRotation;
   final GestureTapCallback onTap;
+  final Icon icon;
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +329,7 @@ class _CategoryHeader extends StatelessWidget {
                 ),
                 child: RotationTransition(
                   turns: chevronRotation,
-                  child: const Icon(Icons.arrow_drop_down),
+                  child: icon,
                 ),
               )
             ],

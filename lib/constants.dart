@@ -21,3 +21,15 @@ const splashPageAnimationDurationInMilliseconds = 300;
 
 // The desktop top padding for a page's first header (e.g. Gallery, Settings)
 const firstHeaderDesktopTopPadding = 5.0;
+
+// ***** MY CONSTANTS *****
+enum Environment { dev, prod }
+
+class Constants {
+  static final Environment env = Environment.prod;
+  static final String words = 'wR6fnNz53SdXkKagMbDCnZ5av8i2';
+  static final String version = '0.0.1';
+  static final String urlApi = env == Environment.dev
+      ? 'http://localhost:8686/api'
+      : 'http://52.15.138.13:8686/api';
+}

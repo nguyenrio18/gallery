@@ -14,6 +14,7 @@ import 'package:gallery/layout/adaptive.dart';
 import 'package:gallery/pages/about.dart' as about;
 import 'package:gallery/pages/home.dart';
 import 'package:gallery/pages/settings_list_item.dart';
+import 'package:gallery/services/auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum _ExpandableSetting {
@@ -287,6 +288,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 const SizedBox(height: 16),
                 Divider(thickness: 2, height: 0, color: colorScheme.background),
                 const SizedBox(height: 12),
+                SettingsLogout(),
                 SettingsAbout(),
                 SettingsFeedback(),
                 const SizedBox(height: 12),
@@ -297,6 +299,24 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class SettingsLogout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return _SettingsLink(
+      title: 'Đăng xuất',
+      icon: Icons.logout,
+      onTap: () {
+        AuthService.handleSignOut().then((value) {
+          Navigator.of(context).pushNamed('/login');
+        }).catchError((dynamic e) {
+          print('handleSignOut: $e');
+          Navigator.of(context).pushNamed('/login');
+        });
+      },
     );
   }
 }
