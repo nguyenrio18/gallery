@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:gallery/models/mentor.dart';
 import 'package:meta/meta.dart';
 
 import 'package:gallery/data/gallery_options.dart';
@@ -51,6 +52,9 @@ class _FrontLayerState extends State<_FrontLayer> {
     // InheritedWidget (for localization). However, we don't need to get
     // destinations again when, say, resizing the window.
     if (destinations == null) {
+      var mentor = Mentor.random();
+      print('!!!!!' + mentor.toString());
+
       if (widget.index == 0) destinations = getFlyDestinations(context);
       if (widget.index == 1) destinations = getSleepDestinations(context);
       // if (widget.index == 2) destinations = getEatDestinations(context);

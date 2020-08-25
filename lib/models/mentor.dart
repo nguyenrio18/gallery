@@ -22,14 +22,14 @@ class Mentor {
       : birthdate = DateTime.now(),
         startDate = DateTime.now().add(const Duration(minutes: 10));
 
-  // Mentor.random()
-  //     : fullName = 'BMW ${1 + Random().nextInt(6)}',
-  //       phoneNumber = '098765432${1 + Random().nextInt(6)}',
-  //       email = 'bmw_${1 + Random().nextInt(6)}@test.png',
-  //       rate = 200 + 20 * 1 / Random().nextInt(10),
-  //       description = '',
-  //       birthdate = DateTime.now(),
-  //       startDate = DateTime.now().add(const Duration(minutes: 10));
+  Mentor.random()
+      : fullName = 'BMW ${1 + Random().nextInt(6)}',
+        phoneNumber = '098765432${1 + Random().nextInt(6)}',
+        email = 'bmw_${1 + Random().nextInt(6)}@test.png',
+        rate = 200 + 20 * 1 / Random().nextInt(10),
+        description = '',
+        birthdate = DateTime.now(),
+        startDate = DateTime.now().add(const Duration(minutes: 10));
 
   // factory Mentor.fromJson(Map<String, dynamic> json) {
   //   return Mentor(
@@ -56,8 +56,8 @@ class Mentor {
   // @override
   // bool operator ==(Object other) => other is Mentor && other.id == id;
 
-  // @override
-  // String toString() {
-  //   return 'Fruit{id: $id, title: $title, imageUrl: $imageUrl, quantity: $quantity}';
-  // }
+  @override
+  String toString() {
+    return 'Mentor{fullName: $fullName, email: $email, birthdate: $birthdate}';
+  }
 }
