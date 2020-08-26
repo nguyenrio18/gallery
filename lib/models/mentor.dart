@@ -31,22 +31,25 @@ class Mentor {
         birthdate = DateTime.now(),
         startDate = DateTime.now().add(const Duration(minutes: 10));
 
-  // factory Mentor.fromJson(Map<String, dynamic> json) {
-  //   return Mentor(
-  //     id: json['id'] as int,
-  //     title: json['title'] as String,
-  //     imageUrl:
-  //         'https://www.diabete.qc.ca/wp-content/uploads/2014/08/Les-fruits.png',
-  //     quantity: json['userId'] as int,
-  //   );
-  // }
+  factory Mentor.fromJson(dynamic json) {
+    return Mentor(
+      fullName: json['fullName'] as String,
+      phoneNumber: json['phoneNumber'] as String,
+      email: json['email'] as String,
+      rate: json['rate'] as double,
+      description: json['description'] as String,
+      // TODO:
+    );
+  }
 
   // Map<String, dynamic> toMap() {
   //   return {
-  //     'id': id,
-  //     'title': title,
-  //     'imageUrl': imageUrl,
-  //     'quantity': quantity,
+  //     'fullName': fullName,
+  //     'phoneNumber': phoneNumber,
+  //     'email': email,
+  //     'rate': rate,
+  //     'description': description,
+  //     // TODO:
   //   };
   // }
 

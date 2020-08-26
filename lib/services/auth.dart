@@ -1,9 +1,21 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gallery/constants.dart';
 import 'package:gallery/services/user.dart';
 import 'package:hive/hive.dart';
 
 class AuthService {
+  static Future<Map<String, String>> getToken() async {
+    var box = await Hive.openBox<String>('user');
+    var token = box.get('token');
+
+    var headers = {
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    return headers;
+  }
+
   static Future<void> handleSignInEmail(String email, String password) async {
     try {
       final auth = FirebaseAuth.instance;

@@ -82,8 +82,16 @@ class _MainView extends StatelessWidget {
       }).catchError((dynamic e) {
         print('handleSignInEmail: $e');
 
+        var isMacOS = false;
+        var isWeb = false;
+        try {
+          isMacOS = Platform.isMacOS;
+        } catch (e) {
+          isWeb = true;
+        }
+
         // MacOS message:"No implementation found for method signInWithCredential on channel plugins.flutter.io/firebase_auth"
-        if (Platform.isMacOS) {
+        if (isMacOS || isWeb) {
           Navigator.of(context).pushNamed('/');
         } else {
           if (e.code == 'ERROR_INVALID_EMAIL') {

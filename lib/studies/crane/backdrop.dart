@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:gallery/services/mentor.dart';
 import 'package:gallery/models/mentor.dart';
 import 'package:meta/meta.dart';
 
@@ -40,10 +41,15 @@ class _FrontLayer extends StatefulWidget {
 }
 
 class _FrontLayerState extends State<_FrontLayer> {
-  List<Destination> destinations;
+  List<Mentor> destinations = [];
 
   static const frontLayerBorderRadius = 16.0;
   static const bottomPadding = EdgeInsets.only(bottom: 120);
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -51,14 +57,15 @@ class _FrontLayerState extends State<_FrontLayer> {
     // We use didChangeDependencies because the initialization involves an
     // InheritedWidget (for localization). However, we don't need to get
     // destinations again when, say, resizing the window.
-    if (destinations == null) {
-      var mentor = Mentor.random();
-      print('!!!!!' + mentor.toString());
-
-      if (widget.index == 0) destinations = getFlyDestinations(context);
-      if (widget.index == 1) destinations = getSleepDestinations(context);
-      // if (widget.index == 2) destinations = getEatDestinations(context);
-    }
+    // if (destinations == null) {
+    //   if (widget.index == 0) destinations = getFlyDestinations(context);
+    //   if (widget.index == 1) destinations = getSleepDestinations(context);
+    //   if (widget.index == 2) destinations = getEatDestinations(context);
+    // }
+    MentorService.fetchMentors().then((value) {
+      print('##### mentors.length = ${value.length}');
+      destinations = value;
+    });
   }
 
   Widget _header() {
