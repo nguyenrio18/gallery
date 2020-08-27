@@ -19,8 +19,6 @@ import 'package:gallery/layout/adaptive.dart';
 import 'package:gallery/studies/crane/border_tab_indicator.dart';
 import 'package:gallery/studies/crane/backlayer.dart';
 import 'package:gallery/studies/crane/colors.dart';
-import 'package:gallery/studies/crane/model/data.dart';
-import 'package:gallery/studies/crane/model/destination.dart';
 import 'package:gallery/studies/crane/header_form.dart';
 import 'package:gallery/studies/crane/item_cards.dart';
 
@@ -49,6 +47,12 @@ class _FrontLayerState extends State<_FrontLayer> {
   @override
   void initState() {
     super.initState();
+
+    MentorService.fetchMentors().then((value) {
+      print('##### mentors.length = ${value.length}');
+      destinations.addAll(value);
+      setState(() {});
+    });
   }
 
   @override
@@ -62,10 +66,6 @@ class _FrontLayerState extends State<_FrontLayer> {
     //   if (widget.index == 1) destinations = getSleepDestinations(context);
     //   if (widget.index == 2) destinations = getEatDestinations(context);
     // }
-    MentorService.fetchMentors().then((value) {
-      print('##### mentors.length = ${value.length}');
-      destinations = value;
-    });
   }
 
   Widget _header() {
