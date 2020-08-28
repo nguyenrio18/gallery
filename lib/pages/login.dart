@@ -4,7 +4,6 @@
 
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -58,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-class _MainView extends StatelessWidget {
+class _MainView extends StatefulWidget {
   _MainView({
     Key key,
     this.usernameController,
@@ -69,12 +68,18 @@ class _MainView extends StatelessWidget {
   final TextEditingController usernameController;
   final TextEditingController passwordController;
   final GlobalKey<FormState> formKey;
-  final Account _account = Account();
+
+  @override
+  __MainViewState createState() => __MainViewState();
+}
+
+class __MainViewState extends State<_MainView> {
+  final Account _account = Account(loginType: false);
 
   void _login(BuildContext context) {
     _account.cleanServerMessage();
-    if (formKey.currentState.validate()) {
-      formKey.currentState.save();
+    if (widget.formKey.currentState.validate()) {
+      widget.formKey.currentState.save();
 
       AuthService.handleSignInEmail(_account.email, _account.password)
           .then((result) {
@@ -96,13 +101,13 @@ class _MainView extends StatelessWidget {
         } else {
           if (e.code == 'ERROR_INVALID_EMAIL') {
             _account.emailMessage = 'Email not valid';
-            formKey.currentState.validate();
+            widget.formKey.currentState.validate();
           } else if (e.code == 'ERROR_USER_NOT_FOUND') {
             _account.emailMessage = 'Email not existed';
-            formKey.currentState.validate();
+            widget.formKey.currentState.validate();
           } else if (e.code == 'ERROR_WRONG_PASSWORD') {
             _account.passwordMessage = 'Password not valid';
-            formKey.currentState.validate();
+            widget.formKey.currentState.validate();
           }
         }
 
@@ -121,13 +126,13 @@ class _MainView extends StatelessWidget {
       listViewChildren = [
         _UsernameInput(
           maxWidth: desktopMaxWidth,
-          usernameController: usernameController,
+          usernameController: widget.usernameController,
           account: _account,
         ),
         const SizedBox(height: 12),
         _PasswordInput(
           maxWidth: desktopMaxWidth,
-          passwordController: passwordController,
+          passwordController: widget.passwordController,
           account: _account,
         ),
         _LoginButton(
@@ -140,20 +145,33 @@ class _MainView extends StatelessWidget {
     } else {
       listViewChildren = [
         const _SmallLogo(),
+        _LoginTypeButtons(
+          loginType: _account.loginType,
+          onEmailTap: () {
+            _account.loginType = false;
+            setState(() {});
+          },
+          onPhoneNumberTap: () {
+            _account.loginType = true;
+            setState(() {});
+          },
+        ),
+        // _ThumbButton(
+        //   onTap: () {
+        //     _login(context);
+        //   },
+        // ),
         _UsernameInput(
-          usernameController: usernameController,
+          usernameController: widget.usernameController,
           account: _account,
         ),
         const SizedBox(height: 12),
         _PasswordInput(
-          passwordController: passwordController,
+          passwordController: widget.passwordController,
           account: _account,
         ),
-        _ThumbButton(
-          onTap: () {
-            _login(context);
-          },
-        ),
+        const SizedBox(height: 20),
+        const _SignInSignUpSegment(),
       ];
     }
 
@@ -171,6 +189,97 @@ class _MainView extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _LoginTypeButtons extends StatelessWidget {
+  _LoginTypeButtons({
+    Key key,
+    this.loginType,
+    @required this.onEmailTap,
+    @required this.onPhoneNumberTap,
+  }) : super(key: key);
+
+  final VoidCallback onEmailTap;
+  final VoidCallback onPhoneNumberTap;
+  final bool loginType;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = const SizedBox(width: 30);
+
+    return Container(
+      margin: const EdgeInsets.only(top: 30, bottom: 15),
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton(
+              child: const Icon(Icons.email),
+              backgroundColor:
+                  loginType ? Colors.white : RallyColors.buttonColor,
+              foregroundColor:
+                  loginType ? RallyColors.buttonColor : Colors.white,
+              focusColor: RallyColors.buttonColor.withOpacity(0.8),
+              onPressed: () {
+                onEmailTap();
+              },
+              tooltip: GalleryLocalizations.of(context).buttonTextCreate,
+            ),
+            spacing,
+            FloatingActionButton(
+              child: const Icon(Icons.phone),
+              backgroundColor:
+                  !loginType ? Colors.white : RallyColors.buttonColor,
+              foregroundColor:
+                  !loginType ? RallyColors.buttonColor : Colors.white,
+              focusColor: RallyColors.buttonColor.withOpacity(0.8),
+              onPressed: () {
+                onPhoneNumberTap();
+              },
+              tooltip: GalleryLocalizations.of(context).buttonTextCreate,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SignInSignUpSegment extends StatelessWidget {
+  const _SignInSignUpSegment({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = const SizedBox(width: 15);
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 0),
+      child: Column(
+        children: [
+          const _FlatButton(
+            text: 'ĐĂNG NHẬP',
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                GalleryLocalizations.of(context).rallyLoginNoAccount,
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+              spacing,
+              const _GhostButton(
+                text: 'ĐĂNG KÝ',
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -245,9 +354,9 @@ class _SmallLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 64),
+      padding: EdgeInsets.symmetric(vertical: 10),
       child: SizedBox(
-        height: 160,
+        height: 100,
         child: ExcludeSemantics(
           child: FadeInImagePlaceholder(
             image: AssetImage('logo.png', package: 'rally_assets'),
@@ -382,7 +491,7 @@ class _ThumbButtonState extends State<_ThumbButton> {
           },
           child: Container(
             decoration: borderDecoration,
-            height: 120,
+            height: 80,
             child: ExcludeSemantics(
               child: Image.asset(
                 'thumb.png',
@@ -427,6 +536,56 @@ class _LoginButton extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _FlatButton extends StatelessWidget {
+  const _FlatButton({Key key, @required this.text}) : super(key: key);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      // borderSide: const BorderSide(color: RallyColors.buttonColor),
+      color: RallyColors.buttonColor,
+      // highlightedBorderColor: RallyColors.buttonColor,
+      focusColor: RallyColors.buttonColor.withOpacity(0.8),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      textColor: Colors.white,
+      onPressed: () {
+        Navigator.of(context).pushNamed(RallyApp.homeRoute);
+      },
+      child: Text(text),
+    );
+  }
+}
+
+class _GhostButton extends StatelessWidget {
+  const _GhostButton({Key key, @required this.text}) : super(key: key);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlineButton(
+      borderSide: const BorderSide(color: RallyColors.white60),
+      color: RallyColors.buttonColor,
+      highlightedBorderColor: RallyColors.buttonColor,
+      focusColor: RallyColors.buttonColor.withOpacity(0.8),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      textColor: RallyColors.buttonColor, // Colors.white,
+      onPressed: () {
+        Navigator.of(context).pushNamed(RallyApp.homeRoute);
+      },
+      child: Text(text),
     );
   }
 }
@@ -484,14 +643,20 @@ class _FilledButton extends StatelessWidget {
 }
 
 class Account {
-  @required
+  bool loginType;
+  // @required
   String email;
   String emailMessage;
-  @required
+  // @required
   String password;
   String passwordMessage;
+  String phoneNumber;
+  String phoneNumberMessage;
+  String otp;
+  String otpMessage;
 
-  Account({this.email, this.password});
+  Account(
+      {this.loginType, this.email, this.password, this.phoneNumber, this.otp});
 
   void cleanServerMessage() {
     emailMessage = null;
