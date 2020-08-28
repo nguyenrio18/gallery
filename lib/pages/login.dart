@@ -216,6 +216,7 @@ class _LoginTypeButtons extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             FloatingActionButton(
+              heroTag: 'email',
               child: const Icon(Icons.email),
               backgroundColor:
                   loginType ? Colors.white : RallyColors.buttonColor,
@@ -229,6 +230,7 @@ class _LoginTypeButtons extends StatelessWidget {
             ),
             spacing,
             FloatingActionButton(
+              heroTag: 'phoneNumber',
               child: const Icon(Icons.phone),
               backgroundColor:
                   !loginType ? Colors.white : RallyColors.buttonColor,
