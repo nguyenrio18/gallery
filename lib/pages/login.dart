@@ -28,6 +28,8 @@ class _LoginPageState extends State<LoginPage> {
       TextEditingController(text: 'nugyen1999@gmail.com');
   final TextEditingController _passwordController =
       TextEditingController(text: '123456');
+  final TextEditingController _phoneNumberController =
+      TextEditingController(text: '0984251186');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -41,6 +43,7 @@ class _LoginPageState extends State<LoginPage> {
             child: _MainView(
               usernameController: _usernameController,
               passwordController: _passwordController,
+              phoneNumberController: _phoneNumberController,
               formKey: _formKey,
             ),
           ),
@@ -62,11 +65,13 @@ class _MainView extends StatefulWidget {
     Key key,
     this.usernameController,
     this.passwordController,
+    this.phoneNumberController,
     this.formKey,
   }) : super(key: key);
 
   final TextEditingController usernameController;
   final TextEditingController passwordController;
+  final TextEditingController phoneNumberController;
   final GlobalKey<FormState> formKey;
 
   @override
@@ -124,6 +129,7 @@ class __MainViewState extends State<_MainView> {
     if (isDesktop) {
       final desktopMaxWidth = 400.0 + 100.0 * (cappedTextScale(context) - 1);
       listViewChildren = [
+        const _TopBar(),
         _UsernameInput(
           maxWidth: desktopMaxWidth,
           usernameController: widget.usernameController,
@@ -156,39 +162,101 @@ class __MainViewState extends State<_MainView> {
             setState(() {});
           },
         ),
-        // _ThumbButton(
-        //   onTap: () {
-        //     _login(context);
-        //   },
-        // ),
-        _UsernameInput(
-          usernameController: widget.usernameController,
-          account: _account,
-        ),
-        const SizedBox(height: 12),
-        _PasswordInput(
-          passwordController: widget.passwordController,
-          account: _account,
-        ),
-        const SizedBox(height: 20),
-        const _SignInSignUpSegment(),
       ];
-    }
 
-    return Column(
-      children: [
-        if (isDesktop) const _TopBar(),
-        Expanded(
-          child: Align(
-            alignment: isDesktop ? Alignment.center : Alignment.topCenter,
-            child: ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              children: listViewChildren,
+      if (!_account.loginType) {
+        final spacing = const SizedBox(width: 15);
+        listViewChildren.addAll([
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Đăng nhập bằng mật khẩu',
+                style: Theme.of(context).textTheme.caption,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _UsernameInput(
+            usernameController: widget.usernameController,
+            account: _account,
+          ),
+          const SizedBox(height: 12),
+          _PasswordInput(
+            passwordController: widget.passwordController,
+            account: _account,
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _FlatButton(
+                  text: 'ĐĂNG NHẬP',
+                  onTap: () {
+                    _login(context);
+                  }),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    GalleryLocalizations.of(context).rallyLoginNoAccount,
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  spacing,
+                  const _GhostButton(
+                    text: 'ĐĂNG KÝ',
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ]);
+      } else {
+        listViewChildren.addAll([
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Đăng nhập bằng mã OTP',
+                style: Theme.of(context).textTheme.caption,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _PhoneNumberInput(
+            phoneNumberController: widget.phoneNumberController,
+            account: _account,
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _FlatButton(text: 'NHẬN MÃ 6 SỐ', onTap: () {}),
+            ],
+          ),
+        ]);
+      }
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
+      child: CustomScrollView(
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(children: listViewChildren),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -210,7 +278,7 @@ class _LoginTypeButtons extends StatelessWidget {
     final spacing = const SizedBox(width: 30);
 
     return Container(
-      margin: const EdgeInsets.only(top: 30, bottom: 15),
+      margin: const EdgeInsets.only(top: 45, bottom: 15),
       child: Center(
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -244,43 +312,6 @@ class _LoginTypeButtons extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _SignInSignUpSegment extends StatelessWidget {
-  const _SignInSignUpSegment({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final spacing = const SizedBox(width: 15);
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 0),
-      child: Column(
-        children: [
-          const _FlatButton(
-            text: 'ĐĂNG NHẬP',
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                GalleryLocalizations.of(context).rallyLoginNoAccount,
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-              spacing,
-              const _GhostButton(
-                text: 'ĐĂNG KÝ',
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -356,7 +387,7 @@ class _SmallLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.zero,
       child: SizedBox(
         height: 100,
         child: ExcludeSemantics(
@@ -396,9 +427,12 @@ class _UsernameInput extends StatelessWidget {
           ),
           keyboardType: TextInputType.emailAddress,
           validator: (val) {
-            if (val.isEmpty) return 'Vui lòng nhập Email';
-
-            return account.emailMessage;
+            if (!account.loginType) {
+              if (val.isEmpty) return 'Vui lòng nhập Email';
+              return account.emailMessage;
+            } else {
+              return null;
+            }
           },
         ),
       ),
@@ -432,9 +466,51 @@ class _PasswordInput extends StatelessWidget {
           ),
           obscureText: true,
           validator: (val) {
-            if (val.isEmpty) return 'Vui lòng nhập Mật khẩu';
+            if (!account.loginType) {
+              if (val.isEmpty) return 'Vui lòng nhập Mật khẩu';
+              return account.passwordMessage;
+            } else {
+              return null;
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
 
-            return account.passwordMessage;
+class _PhoneNumberInput extends StatelessWidget {
+  const _PhoneNumberInput({
+    Key key,
+    this.maxWidth,
+    this.phoneNumberController,
+    this.account,
+  }) : super(key: key);
+
+  final double maxWidth;
+  final TextEditingController phoneNumberController;
+  final Account account;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
+        child: TextFormField(
+          onSaved: (val) => account.phoneNumber = val,
+          controller: phoneNumberController,
+          decoration: const InputDecoration(
+            labelText: 'Số điện thoại',
+          ),
+          keyboardType: TextInputType.emailAddress,
+          validator: (val) {
+            if (account.loginType) {
+              if (val.isEmpty) return 'Vui lòng nhập Số điện thoại';
+              return account.phoneNumberMessage;
+            } else {
+              return null;
+            }
           },
         ),
       ),
@@ -543,9 +619,11 @@ class _LoginButton extends StatelessWidget {
 }
 
 class _FlatButton extends StatelessWidget {
-  const _FlatButton({Key key, @required this.text}) : super(key: key);
+  const _FlatButton({Key key, @required this.text, @required this.onTap})
+      : super(key: key);
 
   final String text;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -560,7 +638,7 @@ class _FlatButton extends StatelessWidget {
       ),
       textColor: Colors.white,
       onPressed: () {
-        Navigator.of(context).pushNamed(RallyApp.homeRoute);
+        onTap();
       },
       child: Text(text),
     );
