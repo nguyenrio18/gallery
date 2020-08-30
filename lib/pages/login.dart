@@ -264,8 +264,11 @@ class __MainViewState extends State<_MainView> {
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                   spacing,
-                  const _GhostButton(
+                  _GhostButton(
                     text: 'ĐĂNG KÝ',
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/signup');
+                    },
                   ),
                 ],
               ),
@@ -720,9 +723,11 @@ class _FlatButton extends StatelessWidget {
 }
 
 class _GhostButton extends StatelessWidget {
-  const _GhostButton({Key key, @required this.text}) : super(key: key);
+  const _GhostButton({Key key, @required this.text, @required this.onTap})
+      : super(key: key);
 
   final String text;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -737,7 +742,7 @@ class _GhostButton extends StatelessWidget {
       ),
       textColor: RallyColors.buttonColor, // Colors.white,
       onPressed: () {
-        Navigator.of(context).pushNamed(RallyApp.homeRoute);
+        onTap();
       },
       child: Text(text),
     );
