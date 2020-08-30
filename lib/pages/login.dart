@@ -31,12 +31,13 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _phoneNumberController =
       TextEditingController(text: '0984251186');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return ApplyTextOptions(
       child: Scaffold(
-        appBar: AppBar(automaticallyImplyLeading: false),
+        key: _scaffoldKey,
         body: SafeArea(
           child: Form(
             key: _formKey,
@@ -45,6 +46,7 @@ class _LoginPageState extends State<LoginPage> {
               passwordController: _passwordController,
               phoneNumberController: _phoneNumberController,
               formKey: _formKey,
+              scaffoldKey: _scaffoldKey,
             ),
           ),
         ),
@@ -67,12 +69,14 @@ class _MainView extends StatefulWidget {
     this.passwordController,
     this.phoneNumberController,
     this.formKey,
+    this.scaffoldKey,
   }) : super(key: key);
 
   final TextEditingController usernameController;
   final TextEditingController passwordController;
   final TextEditingController phoneNumberController;
   final GlobalKey<FormState> formKey;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
   __MainViewState createState() => __MainViewState();
@@ -119,6 +123,55 @@ class __MainViewState extends State<_MainView> {
         return print(e);
       });
     }
+  }
+
+  Future<void> _showDemoDialog<T>({BuildContext context, Widget child}) async {
+    child = ApplyTextOptions(
+      child: Theme(
+        data: Theme.of(context),
+        child: child,
+      ),
+    );
+    final value = await showDialog<T>(
+      context: context,
+      builder: (context) => child,
+    );
+    // The value passed to Navigator.pop() or null.
+    if (value != null && value is String) {
+      widget.scaffoldKey.currentState.hideCurrentSnackBar();
+      widget.scaffoldKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text(GalleryLocalizations.of(context).dialogSelectedOption(value)),
+      ));
+    }
+  }
+
+  void _showAlertDialogWithTitle(BuildContext context) {
+    final theme = Theme.of(context);
+    final dialogTextStyle = theme.textTheme.subtitle1
+        .copyWith(color: theme.textTheme.caption.color);
+    _showDemoDialog<String>(
+      context: context,
+      child: AlertDialog(
+        title: Text(GalleryLocalizations.of(context).dialogLocationTitle),
+        content: Wrap(
+          children: [
+            Text(
+              GalleryLocalizations.of(context).dialogLocationDescription,
+              style: dialogTextStyle,
+              textAlign: TextAlign.justify,
+            ),
+            TextFormField(
+              initialValue: '123',
+            )
+          ],
+        ),
+        actions: [
+          _DialogButton(text: GalleryLocalizations.of(context).dialogDisagree),
+          _DialogButton(text: GalleryLocalizations.of(context).dialogAgree),
+        ],
+      ),
+    );
   }
 
   @override
@@ -240,7 +293,12 @@ class __MainViewState extends State<_MainView> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _FlatButton(text: 'NHẬN MÃ 6 SỐ', onTap: () {}),
+              _FlatButton(
+                text: 'NHẬN MÃ 6 SỐ',
+                onTap: () {
+                  _showAlertDialogWithTitle(context);
+                },
+              ),
             ],
           ),
         ]);
@@ -248,7 +306,7 @@ class __MainViewState extends State<_MainView> {
     }
 
     return Container(
-      margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
+      margin: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       child: CustomScrollView(
         slivers: [
           SliverFillRemaining(
@@ -257,6 +315,22 @@ class __MainViewState extends State<_MainView> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DialogButton extends StatelessWidget {
+  const _DialogButton({Key key, this.text}) : super(key: key);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: Text(text),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop(text);
+      },
     );
   }
 }
@@ -387,7 +461,7 @@ class _SmallLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.only(top: 16),
       child: SizedBox(
         height: 100,
         child: ExcludeSemantics(
