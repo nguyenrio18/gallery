@@ -18,8 +18,8 @@ class SignUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(GalleryLocalizations.of(context).demoTextFieldTitle),
+        automaticallyImplyLeading: true,
+        title: const Text('ĐĂNG KÝ TÀI KHOẢN'),
       ),
       body: const TextFormFieldDemo(),
     );

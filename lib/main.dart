@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:gallery/routes.dart';
+import 'package:gallery/services/user.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gallery/constants.dart';
 import 'package:gallery/data/gallery_options.dart';
@@ -22,9 +23,7 @@ Future<void> main() async {
 
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  var box = await Hive.openBox<String>('user');
-  // var box = Hive.box<String>('user');
-  var token = box.get('token');
+  var token = UserService.getBoxItemValue('token');
 
   if (token == null) {
     runApp(const GalleryApp(initialRoute: '/login'));

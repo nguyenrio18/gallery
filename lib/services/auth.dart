@@ -7,8 +7,7 @@ import 'package:hive/hive.dart';
 
 class AuthService {
   static Future<Map<String, String>> getToken() async {
-    var box = await Hive.openBox<String>('user');
-    var token = box.get('token');
+    var token = UserService.getBoxItemValue('token');
 
     var headers = {
       HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -34,24 +33,18 @@ class AuthService {
 
       final token = await UserService.authenticateUser(email, user);
 
-      await saveToken(token);
+      await UserService.setBoxItemValue('token', token);
     } catch (e) {
       try {
         final token =
             await UserService.authenticate(email, '\$${Constants.words}\$');
 
-        await saveToken(token);
+        await UserService.setBoxItemValue('token', token);
       } catch (e2) {
         print('authenticate: $e2');
         throw e;
       }
     }
-  }
-
-  static Future saveToken(String token) async {
-    var box = await Hive.openBox<String>('user');
-    // var box = Hive.box<String>('user');
-    await box.put('token', token);
   }
 
   static Future<void> handleSignOut() async {
@@ -60,9 +53,7 @@ class AuthService {
 
       await auth.signOut();
 
-      var box = await Hive.openBox<String>('user');
-      // var box = Hive.box<String>('user');
-      await box.delete('token');
+      await UserService.setBoxItemValue('token', null);
     } catch (e) {
       rethrow;
     }

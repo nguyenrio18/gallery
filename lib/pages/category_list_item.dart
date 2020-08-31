@@ -15,6 +15,7 @@ class CategoryListItem extends StatefulWidget {
     this.imageString,
     this.demos = const [],
     this.initiallyExpanded = false,
+    this.onTap,
   })  : assert(initiallyExpanded != null),
         super(key: key);
 
@@ -22,6 +23,7 @@ class CategoryListItem extends StatefulWidget {
   final String imageString;
   final List<GalleryDemo> demos;
   final bool initiallyExpanded;
+  final VoidCallback onTap;
 
   @override
   _CategoryListItemState createState() => _CategoryListItemState();
@@ -114,7 +116,7 @@ class _CategoryListItemState extends State<CategoryListItem>
           chevronOpacity: _headerChevronOpacity.value,
           imageString: widget.imageString,
           category: widget.category,
-          onTap: _handleTap,
+          onTap: widget.onTap ?? _handleTap,
         ),
         Padding(
           padding: _childrenPadding.value,

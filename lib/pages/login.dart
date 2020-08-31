@@ -267,7 +267,7 @@ class __MainViewState extends State<_MainView> {
                   _GhostButton(
                     text: 'ĐĂNG KÝ',
                     onTap: () {
-                      Navigator.of(context).pushNamed('/signup');
+                      Navigator.of(context).pushNamed('/usertype');
                     },
                   ),
                 ],

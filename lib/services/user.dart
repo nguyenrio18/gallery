@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gallery/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:hive/hive.dart';
 
 class UserService {
   static Future<String> authenticateUser(
@@ -31,6 +32,25 @@ class UserService {
       return token;
     } else {
       throw Exception('Failed to load token');
+    }
+  }
+
+  static Future<String> getBoxItemValue(String key) async {
+    var box = await Hive.openBox<String>('user');
+    // var box = Hive.box<String>('user');
+
+    var value = box.get(key);
+    return value;
+  }
+
+  static Future<Null> setBoxItemValue(String key, String value) async {
+    var box = await Hive.openBox<String>('user');
+    // var box = Hive.box<String>('user');
+
+    if (value != null) {
+      await box.put(key, value);
+    } else {
+      await box.delete(key);
     }
   }
 }

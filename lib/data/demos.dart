@@ -65,6 +65,9 @@ enum GalleryDemoCategory {
   material,
   cupertino,
   other,
+  // THIS IS A TRICK
+  mentor,
+  mentee,
 }
 
 extension GalleryDemoExtension on GalleryDemoCategory {
@@ -72,6 +75,10 @@ extension GalleryDemoExtension on GalleryDemoCategory {
 
   String displayTitle(GalleryLocalizations localizations) {
     switch (this) {
+      case GalleryDemoCategory.mentor:
+        return 'GIÁO VIÊN';
+      case GalleryDemoCategory.mentee:
+        return 'HỌC VIÊN';
       case GalleryDemoCategory.material:
         return 'SÂN TẬP & TRƯỜNG LÁI'; // 'MATERIAL';
       case GalleryDemoCategory.cupertino:

@@ -5,6 +5,7 @@ import 'package:gallery/pages/demo.dart';
 import 'package:gallery/pages/home.dart';
 import 'package:gallery/pages/login.dart';
 import 'package:gallery/pages/signup.dart';
+import 'package:gallery/pages/usertype.dart';
 import 'package:gallery/studies/crane/app.dart';
 import 'package:gallery/studies/fortnightly/app.dart';
 import 'package:gallery/studies/rally/app.dart';
@@ -70,6 +71,10 @@ class RouteConfiguration {
     Path(
       r'^/signup',
       (context, match) => const SignUpPage(),
+    ),
+    Path(
+      r'^/usertype',
+      (context, match) => const UserTypePage(),
     ),
     Path(
       r'^/',
