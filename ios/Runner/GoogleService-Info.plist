@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>106305782084-0qqp0cfj7p0shpl79i2atp3bi7cjggkf.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.106305782084-0qqp0cfj7p0shpl79i2atp3bi7cjggkf</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>106305782084-9g97d5r7e9ilmo43ov0uhbapulgtsh9f.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDUj_vAzpLD_GNl2hYirCtJXIr2SqQdoWs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>106305782084</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.fs8.holahoclai</string>
+	<key>PROJECT_ID</key>
+	<string>holahoclai</string>
+	<key>STORAGE_BUCKET</key>
+	<string>holahoclai.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:106305782084:ios:76b1fdd39ce23415ff5711</string>
+	<key>DATABASE_URL</key>
+	<string>https://holahoclai.firebaseio.com</string>
+</dict>
+</plist>
