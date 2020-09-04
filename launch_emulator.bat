@@ -1,0 +1,1 @@
+flutter emulators --launch Pixel_2_XL_API_23
