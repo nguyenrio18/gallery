@@ -49,7 +49,6 @@ class _FrontLayerState extends State<_FrontLayer> {
     super.initState();
 
     MentorService.fetchMentors().then((value) {
-      print('##### mentors.length = ${value.length}');
       destinations.addAll(value);
       setState(() {});
     });

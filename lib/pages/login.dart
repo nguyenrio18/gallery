@@ -15,6 +15,7 @@ import 'package:gallery/layout/text_scale.dart';
 import 'package:gallery/services/auth.dart';
 import 'package:gallery/studies/rally/app.dart';
 import 'package:gallery/studies/rally/colors.dart';
+import 'package:gallery/utils/log.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage();
@@ -85,6 +86,16 @@ class _MainView extends StatefulWidget {
 class __MainViewState extends State<_MainView> {
   final Account _account = Account(loginType: false);
 
+  void showInSnackBar(String value) {
+    widget.scaffoldKey.currentState.hideCurrentSnackBar();
+    widget.scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
+        value,
+        style: const TextStyle(color: Colors.red),
+      ),
+    ));
+  }
+
   void _login(BuildContext context) {
     _account.cleanServerMessage();
     if (widget.formKey.currentState.validate()) {
@@ -94,7 +105,7 @@ class __MainViewState extends State<_MainView> {
           .then((result) {
         Navigator.of(context).pushNamed('/');
       }).catchError((dynamic e) {
-        print('handleSignInEmail: $e');
+        printError('handleSignInPassword', e);
 
         var isMacOS = false;
         var isWeb = false;
@@ -107,7 +118,9 @@ class __MainViewState extends State<_MainView> {
         // MacOS message:"No implementation found for method signInWithCredential on channel plugins.flutter.io/firebase_auth"
         if (isMacOS || isWeb) {
           Navigator.of(context).pushNamed('/');
-        } else {
+        } else if (e is SocketException) {
+          showInSnackBar('Lỗi kết nối mạng');
+        } else if (e is PlatformException) {
           if (e.code == 'ERROR_INVALID_EMAIL') {
             _account.emailMessage = 'Email không hợp lệ';
             widget.formKey.currentState.validate();
@@ -117,7 +130,11 @@ class __MainViewState extends State<_MainView> {
           } else if (e.code == 'ERROR_WRONG_PASSWORD') {
             _account.passwordMessage = 'Mật khẩu không đúng';
             widget.formKey.currentState.validate();
+          } else {
+            showInSnackBar(e.toString());
           }
+        } else {
+          showInSnackBar(e.toString());
         }
       });
     }

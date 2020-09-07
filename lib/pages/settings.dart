@@ -15,6 +15,7 @@ import 'package:gallery/pages/about.dart' as about;
 import 'package:gallery/pages/home.dart';
 import 'package:gallery/pages/settings_list_item.dart';
 import 'package:gallery/services/auth.dart';
+import 'package:gallery/utils/log.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum _ExpandableSetting {
@@ -313,7 +314,7 @@ class SettingsLogout extends StatelessWidget {
         AuthService.handleSignOut().then((value) {
           Navigator.of(context).pushNamed('/login');
         }).catchError((dynamic e) {
-          print('handleSignOut: $e');
+          printError('handleSignOut', e);
           Navigator.of(context).pushNamed('/login');
         });
       },
