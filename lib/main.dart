@@ -23,7 +23,7 @@ Future<void> main() async {
 
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  var token = UserService.getBoxItemValue('token');
+  var token = await UserService.getBoxItemValue('token');
 
   if (token == null) {
     runApp(const GalleryApp(initialRoute: '/login'));

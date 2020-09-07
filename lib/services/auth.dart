@@ -6,7 +6,7 @@ import 'package:gallery/services/user.dart';
 
 class AuthService {
   static Future<Map<String, String>> getToken() async {
-    var token = UserService.getBoxItemValue('token');
+    var token = await UserService.getBoxItemValue('token');
 
     var headers = {
       HttpHeaders.authorizationHeader: 'Bearer $token',
