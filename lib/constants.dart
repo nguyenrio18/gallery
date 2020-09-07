@@ -31,5 +31,5 @@ class Constants {
   static final String version = '0.0.1';
   static final String urlApi = env == Environment.dev
       ? 'http://localhost:8686/api'
-      : 'http://52.15.138.13:8686/api';
+      : 'http://34.96.142.89:8686/api';
 }

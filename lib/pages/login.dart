@@ -109,18 +109,16 @@ class __MainViewState extends State<_MainView> {
           Navigator.of(context).pushNamed('/');
         } else {
           if (e.code == 'ERROR_INVALID_EMAIL') {
-            _account.emailMessage = 'Email not valid';
+            _account.emailMessage = 'Email không hợp lệ';
             widget.formKey.currentState.validate();
           } else if (e.code == 'ERROR_USER_NOT_FOUND') {
-            _account.emailMessage = 'Email not existed';
+            _account.emailMessage = 'Email không tồn tại';
             widget.formKey.currentState.validate();
           } else if (e.code == 'ERROR_WRONG_PASSWORD') {
-            _account.passwordMessage = 'Password not valid';
+            _account.passwordMessage = 'Mật khẩu không đúng';
             widget.formKey.currentState.validate();
           }
         }
-
-        return print(e);
       });
     }
   }

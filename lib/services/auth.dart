@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gallery/constants.dart';
 import 'package:gallery/services/user.dart';
-import 'package:hive/hive.dart';
 
 class AuthService {
   static Future<Map<String, String>> getToken() async {
@@ -35,15 +34,22 @@ class AuthService {
 
       await UserService.setBoxItemValue('token', token);
     } catch (e) {
-      try {
-        final token =
-            await UserService.authenticate(email, '\$${Constants.words}\$');
+      if (e != null &&
+          e.message != null &&
+          // TODO: Check e.code for this case
+          e.message.toString().contains('No implementation found')) {
+        try {
+          final token =
+              await UserService.authenticate(email, '\$${Constants.words}\$');
 
-        await UserService.setBoxItemValue('token', token);
-      } catch (e2) {
-        print('authenticate: $e2');
-        throw e;
+          await UserService.setBoxItemValue('token', token);
+        } catch (e2) {
+          print('UserService.authenticate: $e2');
+          throw e;
+        }
       }
+
+      rethrow;
     }
   }
 
