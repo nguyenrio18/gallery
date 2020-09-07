@@ -14,7 +14,8 @@ class AuthService {
     return headers;
   }
 
-  static Future<void> handleSignInEmail(String email, String password) async {
+  static Future<void> handleSignInPassword(
+      String email, String password) async {
     try {
       final auth = FirebaseAuth.instance;
 
@@ -65,16 +66,21 @@ class AuthService {
     }
   }
 
-  Future<FirebaseUser> handleSignUp(String email, String password) async {
-    final auth = FirebaseAuth.instance;
+  static Future<FirebaseUser> handleSignUpPassword(
+      String email, String password) async {
+    try {
+      final auth = FirebaseAuth.instance;
 
-    var result = await auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    final user = result.user;
+      var result = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      final user = result.user;
 
-    assert(user != null);
-    assert(await user.getIdToken() != null);
+      assert(user != null);
+      assert(await user.getIdToken() != null);
 
-    return user;
+      return user;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

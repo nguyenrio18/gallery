@@ -90,7 +90,7 @@ class __MainViewState extends State<_MainView> {
     if (widget.formKey.currentState.validate()) {
       widget.formKey.currentState.save();
 
-      AuthService.handleSignInEmail(_account.email, _account.password)
+      AuthService.handleSignInPassword(_account.email, _account.password)
           .then((result) {
         Navigator.of(context).pushNamed('/');
       }).catchError((dynamic e) {

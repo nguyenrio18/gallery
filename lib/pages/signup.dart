@@ -9,6 +9,8 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 
 import 'package:gallery/l10n/gallery_localizations.dart';
 
+import 'package:gallery/services/auth.dart';
+
 // BEGIN textFieldDemo
 
 class SignUpPage extends StatelessWidget {
@@ -104,7 +106,6 @@ class _PasswordFieldState extends State<PasswordField> {
 
 class TextFormFieldDemoState extends State<TextFormFieldDemo> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  int _fabLocation;
 
   PersonData person = PersonData();
 
@@ -135,6 +136,9 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
       form.save();
       showInSnackBar(GalleryLocalizations.of(context)
           .demoTextFieldNameHasPhoneNumber(person.name, person.phoneNumber));
+
+      AuthService.handleSignUpPassword(person.email, person.password)
+          .catchError(() {});
     }
   }
 
@@ -167,13 +171,6 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
       return GalleryLocalizations.of(context).demoTextFieldPasswordsDoNotMatch;
     }
     return null;
-  }
-
-  void _onFabLocationChanged(int value) {
-    print('004 ### $value');
-    setState(() {
-      _fabLocation = value;
-    });
   }
 
   @override
@@ -303,18 +300,6 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   maxLength: 8,
                   obscureText: true,
                   validator: _validatePassword,
-                ),
-                RadioListTile<int>(
-                  title: const Text('Là giảng viên'),
-                  value: 1,
-                  groupValue: _fabLocation,
-                  onChanged: _onFabLocationChanged,
-                ),
-                RadioListTile<int>(
-                  title: const Text('Là học viên'),
-                  value: 2,
-                  groupValue: _fabLocation,
-                  onChanged: _onFabLocationChanged,
                 ),
                 sizedBoxSpace,
                 Center(

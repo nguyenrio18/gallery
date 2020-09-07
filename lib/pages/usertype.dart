@@ -12,7 +12,7 @@ class UserTypePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('PHÂN LOẠI NGƯỜI DÙNG'),
+        title: const Text('ĐĂNG KÝ TÀI KHOẢN'),
       ),
       body: Stack(
         children: [
