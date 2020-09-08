@@ -288,6 +288,9 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                       person.password = value;
                     });
                   },
+                  onSaved: (value) {
+                    person.password = value;
+                  },
                 ),
                 sizedBoxSpace,
                 TextFormField(
