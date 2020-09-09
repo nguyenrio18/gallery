@@ -6,21 +6,21 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
+import 'package:flutter_gen/gen_l10n/gallery_localizations.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gallery/services/mentor.dart';
 import 'package:gallery/models/mentor.dart';
-import 'package:meta/meta.dart';
-
 import 'package:gallery/data/gallery_options.dart';
-// import 'package:gallery/l10n/gallery_localizations.dart';
 import 'package:gallery/layout/adaptive.dart';
-// import 'package:gallery/layout/image_placeholder.dart';
-import 'package:gallery/studies/crane/border_tab_indicator.dart';
+import 'package:gallery/layout/image_placeholder.dart';
 import 'package:gallery/studies/crane/backlayer.dart';
+import 'package:gallery/studies/crane/border_tab_indicator.dart';
 import 'package:gallery/studies/crane/colors.dart';
 import 'package:gallery/studies/crane/header_form.dart';
 import 'package:gallery/studies/crane/item_cards.dart';
+import 'package:gallery/studies/crane/model/data.dart';
+import 'package:gallery/studies/crane/model/destination.dart';
+import 'package:meta/meta.dart';
 
 class _FrontLayer extends StatefulWidget {
   const _FrontLayer({
@@ -85,7 +85,11 @@ class _FrontLayerState extends State<_FrontLayer> {
     final isDesktop = isDisplayDesktop(context);
     final isSmallDesktop = isDisplaySmallDesktop(context);
 
-    final crossAxisCount = isSmallDesktop ? 2 : isDesktop ? 4 : 1;
+    final crossAxisCount = isSmallDesktop
+        ? 2
+        : isDesktop
+            ? 4
+            : 1;
 
     return FocusTraversalGroup(
       policy: ReadingOrderTraversalPolicy(),
