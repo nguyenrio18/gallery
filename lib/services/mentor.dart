@@ -8,9 +8,8 @@ import 'package:http/http.dart' as http;
 
 class MentorService {
   static Future<List<Mentor>> fetchMentors() async {
-    var headers = await AuthService.getToken();
-    final response =
-        await http.get('${Constants.urlApi}/mentors', headers: headers);
+    final response = await http.get('${Constants.urlApi}/mentors',
+        headers: await AuthService.getHeaders(true));
     if (response.statusCode == 200) {
       return decodeMentor(response.body);
     } else {

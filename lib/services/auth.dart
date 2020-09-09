@@ -4,15 +4,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery/constants.dart';
 import 'package:gallery/services/user.dart';
+import 'package:gallery/models/user.dart';
 import 'package:gallery/utils/log.dart';
 
 class AuthService {
-  static Future<Map<String, String>> getToken() async {
+  static Future<Map<String, String>> getHeaders(bool hasAuthorization) async {
     var token = await UserService.getBoxItemValue('token');
 
-    var headers = {
-      HttpHeaders.authorizationHeader: 'Bearer $token',
-    };
+    Map<String, String> headers;
+    if (hasAuthorization) {
+      headers = <String, String>{
+        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      };
+    } else {
+      headers = <String, String>{
+        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+      };
+    }
+
     return headers;
   }
 
@@ -67,19 +77,22 @@ class AuthService {
     }
   }
 
-  static Future<FirebaseUser> handleSignUpPassword(
-      String email, String password) async {
+  static Future<FirebaseUser> handleSignUpPassword(User user) async {
     try {
       final auth = FirebaseAuth.instance;
 
       var result = await auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      final user = result.user;
+        email: user.email,
+        password: user.password,
+      );
+      final registedUser = result.user;
 
-      assert(user != null);
-      assert(await user.getIdToken() != null);
+      assert(registedUser != null);
+      assert(await registedUser.getIdToken() != null);
 
-      return user;
+      await UserService.register(user);
+
+      return registedUser;
     } catch (e) {
       rethrow;
     }

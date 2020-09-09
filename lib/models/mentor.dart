@@ -1,7 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
-
 // @immutable
 class Mentor {
   final String fullName;

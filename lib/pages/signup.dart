@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 
 import 'package:gallery/l10n/gallery_localizations.dart';
+import 'package:gallery/models/user.dart';
 
 import 'package:gallery/services/auth.dart';
 
@@ -33,13 +34,6 @@ class TextFormFieldDemo extends StatefulWidget {
 
   @override
   TextFormFieldDemoState createState() => TextFormFieldDemoState();
-}
-
-class PersonData {
-  String name = '';
-  String phoneNumber = '';
-  String email = '';
-  String password = '';
 }
 
 class PasswordField extends StatefulWidget {
@@ -107,7 +101,7 @@ class _PasswordFieldState extends State<PasswordField> {
 class TextFormFieldDemoState extends State<TextFormFieldDemo> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  PersonData person = PersonData();
+  User person = User();
 
   void showInSnackBar(String value) {
     _scaffoldKey.currentState.hideCurrentSnackBar();
@@ -135,10 +129,9 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
     } else {
       form.save();
       showInSnackBar(GalleryLocalizations.of(context)
-          .demoTextFieldNameHasPhoneNumber(person.name, person.phoneNumber));
+          .demoTextFieldNameHasPhoneNumber(person.firstName, person.lastName));
 
-      AuthService.handleSignUpPassword(person.email, person.password)
-          .catchError(() {});
+      AuthService.handleSignUpPassword(person).catchError((dynamic e) {});
     }
   }
 
@@ -203,7 +196,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                         GalleryLocalizations.of(context).demoTextFieldNameField,
                   ),
                   onSaved: (value) {
-                    person.name = value;
+                    person.firstName = value;
                   },
                   validator: _validateName,
                 ),
@@ -221,7 +214,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   ),
                   keyboardType: TextInputType.phone,
                   onSaved: (value) {
-                    person.phoneNumber = value;
+                    person.lastName = value;
                   },
                   maxLength: 14,
                   maxLengthEnforced: false,

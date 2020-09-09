@@ -3,6 +3,9 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gallery/constants.dart';
+import 'package:gallery/models/user.dart';
+import 'package:gallery/services/auth.dart';
+import 'package:gallery/utils/log.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 
@@ -15,9 +18,7 @@ class UserService {
   static Future<String> authenticate(String username, String password) async {
     final response = await http.post(
       '${Constants.urlApi}/authenticate',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: await AuthService.getHeaders(false),
       body: jsonEncode(<String, String>{
         'username': username,
         'password': password,
@@ -32,6 +33,24 @@ class UserService {
       return token;
     } else {
       throw Exception('Failed to load token');
+    }
+  }
+
+  static Future<bool> register(User user) async {
+    final response = await http.post(
+      '${Constants.urlApi}/register',
+      headers: await AuthService.getHeaders(false),
+      body: user.toMap(),
+    );
+
+    final jsonData = json.decode(response.body) as Map<String, dynamic>;
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('### 008: $jsonData');
+
+      return true;
+    } else {
+      printError('register', jsonData);
+      throw Exception('Failed to register user');
     }
   }
 
