@@ -11,6 +11,8 @@ import 'package:gallery/l10n/gallery_localizations.dart';
 import 'package:gallery/models/user.dart';
 
 import 'package:gallery/services/auth.dart';
+import 'package:gallery/utils/api_exception.dart';
+import 'package:gallery/utils/log.dart';
 
 // BEGIN textFieldDemo
 
@@ -120,6 +122,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
 
   void _handleSubmitted() {
     final form = _formKey.currentState;
+    person.cleanServerMessage();
     if (!form.validate()) {
       _autoValidateMode =
           AutovalidateMode.always; // Start validating on every change.
@@ -131,7 +134,18 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
       showInSnackBar(GalleryLocalizations.of(context)
           .demoTextFieldNameHasPhoneNumber(person.firstName, person.lastName));
 
-      AuthService.handleSignUpPassword(person).catchError((dynamic e) {});
+      AuthService.handleSignUpPassword(person).catchError((dynamic e) {
+        if ((e is PlatformException &&
+                e.code == 'ERROR_EMAIL_ALREADY_IN_USE') ||
+            (e is ApiException && e.message == 'error.userexists')) {
+          person.emailMessage = 'Email đã được sử dụng';
+          _formKey.currentState.validate();
+          showInSnackBar(person.emailMessage);
+        } else {
+          printError('handleSignUpPassword', e);
+          showInSnackBar(e.toString());
+        }
+      });
     }
   }
 
@@ -240,6 +254,10 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   keyboardType: TextInputType.emailAddress,
                   onSaved: (value) {
                     person.email = value;
+                    person.login = value;
+                  },
+                  validator: (value) {
+                    return person.emailMessage;
                   },
                 ),
                 sizedBoxSpace,

@@ -4,21 +4,26 @@ class ApiException implements Exception {
   final String message;
   final String title;
   final int status;
+  final String type;
+
   ApiException({
     this.message,
     this.title,
     this.status,
+    this.type,
   });
 
   ApiException copyWith({
     String message,
     String title,
     int status,
+    String type,
   }) {
     return ApiException(
       message: message ?? this.message,
       title: title ?? this.title,
       status: status ?? this.status,
+      type: type ?? this.type,
     );
   }
 
@@ -27,6 +32,7 @@ class ApiException implements Exception {
       'message': message,
       'title': title,
       'status': status,
+      'type': type,
     };
     return map;
   }
@@ -38,6 +44,7 @@ class ApiException implements Exception {
       message: map['message'] as String,
       title: map['title'] as String,
       status: map['status'] as int,
+      type: map['type'] as String,
     );
   }
 
@@ -47,8 +54,9 @@ class ApiException implements Exception {
       ApiException.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() =>
-      'ApiException(message: $message, title: $title, status: $status)';
+  String toString() {
+    return 'ApiException(message: $message, title: $title, status: $status, type: $type)';
+  }
 
   @override
   bool operator ==(Object o) {
@@ -57,9 +65,12 @@ class ApiException implements Exception {
     return o is ApiException &&
         o.message == message &&
         o.title == title &&
-        o.status == status;
+        o.status == status &&
+        o.type == type;
   }
 
   @override
-  int get hashCode => message.hashCode ^ title.hashCode ^ status.hashCode;
+  int get hashCode {
+    return message.hashCode ^ title.hashCode ^ status.hashCode ^ type.hashCode;
+  }
 }

@@ -25,18 +25,23 @@ class User {
       'activated': true,
       'authorities': authorities,
       'createdBy': createdBy,
-      'createdDate': createdDate.toIso8601String(),
+      'createdDate': createdDate != null ? createdDate.toIso8601String() : null,
       'email': email,
       'firstName': firstName,
       'id': id,
       'imageUrl': imageUrl,
       'langKey': langKey,
       'lastModifiedBy': lastModifiedBy,
-      'lastModifiedDate': lastModifiedDate.toIso8601String(),
+      'lastModifiedDate':
+          lastModifiedDate != null ? lastModifiedDate.toIso8601String() : null,
       'lastName': lastName,
       'login': login,
       'password': password
     };
     return map;
+  }
+
+  void cleanServerMessage() {
+    emailMessage = null;
   }
 }

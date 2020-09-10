@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gallery/constants.dart';
 import 'package:gallery/models/user.dart';
 import 'package:gallery/services/auth.dart';
+import 'package:gallery/utils/api_exception.dart';
 import 'package:gallery/utils/log.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
@@ -37,20 +38,21 @@ class UserService {
   }
 
   static Future<bool> register(User user) async {
+    var userRemovedNull = user.toMap();
+    userRemovedNull.removeWhere((key, dynamic value) => value == null);
+
     final response = await http.post(
       '${Constants.urlApi}/register',
       headers: await AuthService.getHeaders(false),
-      body: user.toMap(),
+      body: jsonEncode(userRemovedNull),
     );
 
-    final jsonData = json.decode(response.body) as Map<String, dynamic>;
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('### 008: $jsonData');
-
       return true;
     } else {
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
       printError('register', jsonData);
-      throw Exception('Failed to register user');
+      throw ApiException.fromJson(response.body);
     }
   }
 
