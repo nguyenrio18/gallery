@@ -105,13 +105,6 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
 
   User person = User();
 
-  void showInSnackBar(String value) {
-    _scaffoldKey.currentState.hideCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(value),
-    ));
-  }
-
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -126,24 +119,30 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
     if (!form.validate()) {
       _autoValidateMode =
           AutovalidateMode.always; // Start validating on every change.
-      showInSnackBar(
-        GalleryLocalizations.of(context).demoTextFieldFormErrors,
-      );
+      showInSnackBar(GalleryLocalizations.of(context).demoTextFieldFormErrors,
+          true, _scaffoldKey);
     } else {
       form.save();
-      showInSnackBar(GalleryLocalizations.of(context)
-          .demoTextFieldNameHasPhoneNumber(person.firstName, person.lastName));
+      // showInSnackBar(GalleryLocalizations.of(context)
+      //     .demoTextFieldNameHasPhoneNumber(person.firstName, person.lastName));
 
-      AuthService.handleSignUpPassword(person).catchError((dynamic e) {
+      printInfo('person', person);
+
+      AuthService.handleSignUpPassword(person)
+          .then((value) => showInSnackBar(
+              'Đăng ký thành công, bạn đã có thể đăng nhập với tài khoản này!',
+              false,
+              _scaffoldKey))
+          .catchError((dynamic e) {
         if ((e is PlatformException &&
                 e.code == 'ERROR_EMAIL_ALREADY_IN_USE') ||
             (e is ApiException && e.message == 'error.userexists')) {
           person.emailMessage = 'Email đã được sử dụng';
           _formKey.currentState.validate();
-          showInSnackBar(person.emailMessage);
+          showInSnackBar(person.emailMessage, true, _scaffoldKey);
         } else {
           printError('handleSignUpPassword', e);
-          showInSnackBar(e.toString());
+          showInSnackBar(e.toString(), true, _scaffoldKey);
         }
       });
     }
@@ -210,7 +209,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                         GalleryLocalizations.of(context).demoTextFieldNameField,
                   ),
                   onSaved: (value) {
-                    person.firstName = value;
+                    person.firstName = value.trim();
                   },
                   validator: _validateName,
                 ),
@@ -228,7 +227,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   ),
                   keyboardType: TextInputType.phone,
                   onSaved: (value) {
-                    person.lastName = value;
+                    person.lastName = value.trim();
                   },
                   maxLength: 14,
                   maxLengthEnforced: false,
@@ -253,39 +252,12 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                   onSaved: (value) {
-                    person.email = value;
-                    person.login = value;
+                    person.email = value.trim();
+                    person.login = value.trim();
                   },
                   validator: (value) {
                     return person.emailMessage;
                   },
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintText: GalleryLocalizations.of(context)
-                        .demoTextFieldTellUsAboutYourself,
-                    helperText: GalleryLocalizations.of(context)
-                        .demoTextFieldKeepItShort,
-                    labelText:
-                        GalleryLocalizations.of(context).demoTextFieldLifeStory,
-                  ),
-                  maxLines: 3,
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  cursorColor: cursorColor,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText:
-                        GalleryLocalizations.of(context).demoTextFieldSalary,
-                    suffixText:
-                        GalleryLocalizations.of(context).demoTextFieldUSD,
-                  ),
-                  maxLines: 1,
                 ),
                 sizedBoxSpace,
                 PasswordField(

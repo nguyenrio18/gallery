@@ -86,16 +86,6 @@ class _MainView extends StatefulWidget {
 class __MainViewState extends State<_MainView> {
   final Account _account = Account(loginType: false);
 
-  void showInSnackBar(String value) {
-    widget.scaffoldKey.currentState.hideCurrentSnackBar();
-    widget.scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(
-        value,
-        style: const TextStyle(color: Colors.red),
-      ),
-    ));
-  }
-
   void _login(BuildContext context) {
     _account.cleanServerMessage();
     if (widget.formKey.currentState.validate()) {
@@ -119,7 +109,7 @@ class __MainViewState extends State<_MainView> {
         if (isMacOS || isWeb) {
           Navigator.of(context).pushNamed('/');
         } else if (e is SocketException) {
-          showInSnackBar('Lỗi kết nối mạng');
+          showInSnackBar('Lỗi kết nối mạng', true, widget.scaffoldKey);
         } else if (e is PlatformException) {
           if (e.code == 'ERROR_INVALID_EMAIL') {
             _account.emailMessage = 'Email không hợp lệ';
@@ -131,10 +121,10 @@ class __MainViewState extends State<_MainView> {
             _account.passwordMessage = 'Mật khẩu không đúng';
             widget.formKey.currentState.validate();
           } else {
-            showInSnackBar(e.toString());
+            showInSnackBar(e.toString(), true, widget.scaffoldKey);
           }
         } else {
-          showInSnackBar(e.toString());
+          showInSnackBar(e.toString(), true, widget.scaffoldKey);
         }
       });
     }
