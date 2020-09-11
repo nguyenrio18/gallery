@@ -43,7 +43,7 @@ class AuthService {
 
       final token = await UserService.authenticateUser(email, user);
 
-      await UserService.setBoxItemValue('token', token);
+      await UserService.setBoxItemValue(UserService.hiveUserKeyToken, token);
     } catch (e) {
       if (e is PlatformException &&
           e.message != null &&
@@ -54,7 +54,8 @@ class AuthService {
           final token =
               await UserService.authenticate(email, '\$${Constants.words}\$');
 
-          await UserService.setBoxItemValue('token', token);
+          await UserService.setBoxItemValue(
+              UserService.hiveUserKeyToken, token);
         } catch (e2) {
           printError('UserService.authenticate', e2);
           throw e;
@@ -71,7 +72,7 @@ class AuthService {
 
       await auth.signOut();
 
-      await UserService.setBoxItemValue('token', null);
+      await UserService.setBoxItemValue(UserService.hiveUserKeyToken, null);
     } catch (e) {
       rethrow;
     }

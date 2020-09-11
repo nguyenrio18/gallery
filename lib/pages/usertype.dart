@@ -28,8 +28,10 @@ class UserTypePage extends StatelessWidget {
                 demos: List<GalleryDemo>(0),
                 initiallyExpanded: false,
                 onTap: () {
-                  UserService.setBoxItemValue('usertype', 'mentee').then(
-                      (value) => Navigator.of(context).pushNamed('/signup'));
+                  UserService.setBoxItemValue(
+                          UserService.hiveUserKeyUserType, 'mentee')
+                      .then((value) =>
+                          Navigator.of(context).pushNamed('/signup'));
                 },
               ),
               CategoryListItem(
@@ -41,8 +43,10 @@ class UserTypePage extends StatelessWidget {
                 demos: List<GalleryDemo>(0),
                 initiallyExpanded: false,
                 onTap: () {
-                  UserService.setBoxItemValue('usertype', 'mentor').then(
-                      (value) => Navigator.of(context).pushNamed('/signup'));
+                  UserService.setBoxItemValue(
+                          UserService.hiveUserKeyUserType, 'mentor')
+                      .then((value) =>
+                          Navigator.of(context).pushNamed('/signup'));
                 },
               ),
             ],

@@ -11,6 +11,9 @@ import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 
 class UserService {
+  static const String hiveUserKeyToken = 'token';
+  static const String hiveUserKeyUserType = 'usertype';
+
   static Future<String> authenticateUser(
       String username, FirebaseUser user) async {
     return await UserService.authenticate(username, '\$${user.uid}\$');
