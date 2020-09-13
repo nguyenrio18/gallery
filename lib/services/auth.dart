@@ -88,6 +88,8 @@ class AuthService {
       );
       final registedUser = result.user;
 
+      printInfo('handleSignUpPassword', result);
+
       assert(registedUser != null);
       assert(await registedUser.getIdToken() != null);
 

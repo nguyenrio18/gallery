@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gallery/data/demos.dart';
+import 'package:gallery/models/user.dart';
 import 'package:gallery/services/user.dart';
 
 import 'category_list_item.dart';
@@ -29,7 +30,9 @@ class UserTypePage extends StatelessWidget {
                 initiallyExpanded: false,
                 onTap: () {
                   UserService.setBoxItemValue(
-                          UserService.hiveUserKeyUserType, 'mentee')
+                          UserService.hiveUserKeyUserType, User.roleMentee)
+                      .then((value) =>
+                          Future<Null>.delayed(const Duration(seconds: 1)))
                       .then((value) =>
                           Navigator.of(context).pushNamed('/signup'));
                 },
@@ -44,7 +47,9 @@ class UserTypePage extends StatelessWidget {
                 initiallyExpanded: false,
                 onTap: () {
                   UserService.setBoxItemValue(
-                          UserService.hiveUserKeyUserType, 'mentor')
+                          UserService.hiveUserKeyUserType, User.roleMentor)
+                      .then((value) =>
+                          Future<Null>.delayed(const Duration(seconds: 1)))
                       .then((value) =>
                           Navigator.of(context).pushNamed('/signup'));
                 },

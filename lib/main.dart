@@ -26,6 +26,7 @@ Future<void> main() async {
   var token = await UserService.getBoxItemValue('token');
 
   if (token == null) {
+    // runApp(const GalleryApp(initialRoute: '/infomentor'));
     runApp(const GalleryApp(initialRoute: '/login'));
   } else {
     runApp(const GalleryApp());

@@ -11,6 +11,7 @@ import 'package:gallery/l10n/gallery_localizations.dart';
 import 'package:gallery/models/user.dart';
 
 import 'package:gallery/services/auth.dart';
+import 'package:gallery/services/user.dart';
 import 'package:gallery/utils/api_exception.dart';
 import 'package:gallery/utils/log.dart';
 
@@ -128,23 +129,28 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
 
       printInfo('person', person);
 
-      AuthService.handleSignUpPassword(person)
+      UserService.getBoxItemValue(UserService.hiveUserKeyUserType)
+          .then((value) {
+            person.authorities = List<String>.filled(0, null, growable: true);
+            person.authorities.add(value);
+          })
+          .then((value) => AuthService.handleSignUpPassword(person))
           .then((value) => showInSnackBar(
               'Đăng ký thành công, bạn đã có thể đăng nhập với tài khoản này!',
               false,
               _scaffoldKey))
           .catchError((dynamic e) {
-        if ((e is PlatformException &&
-                e.code == 'ERROR_EMAIL_ALREADY_IN_USE') ||
-            (e is ApiException && e.message == 'error.userexists')) {
-          person.emailMessage = 'Email đã được sử dụng';
-          _formKey.currentState.validate();
-          showInSnackBar(person.emailMessage, true, _scaffoldKey);
-        } else {
-          printError('handleSignUpPassword', e);
-          showInSnackBar(e.toString(), true, _scaffoldKey);
-        }
-      });
+            if ((e is PlatformException &&
+                    e.code == 'ERROR_EMAIL_ALREADY_IN_USE') ||
+                (e is ApiException && e.message == 'error.userexists')) {
+              person.emailMessage = 'Email đã được sử dụng';
+              _formKey.currentState.validate();
+              showInSnackBar(person.emailMessage, true, _scaffoldKey);
+            } else {
+              printError('handleSignUpPassword', e);
+              showInSnackBar(e.toString(), true, _scaffoldKey);
+            }
+          });
     }
   }
 
