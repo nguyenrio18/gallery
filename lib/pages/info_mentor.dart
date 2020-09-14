@@ -108,8 +108,8 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   showCursor: true,
                   readOnly: true,
                   onTap: () => {
-                    Future<Null>.delayed(const Duration(seconds: 1)).then(
-                        (value) =>
+                    Future<Null>.delayed(const Duration(milliseconds: 500))
+                        .then((value) =>
                             Navigator.of(context).pushNamed('/listprovince'))
                   },
                 ),
@@ -123,8 +123,8 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   showCursor: true,
                   readOnly: true,
                   onTap: () => {
-                    Future<Null>.delayed(const Duration(seconds: 1)).then(
-                        (value) =>
+                    Future<Null>.delayed(const Duration(milliseconds: 500))
+                        .then((value) =>
                             Navigator.of(context).pushNamed('/listprovince'))
                   },
                 ),
@@ -138,8 +138,8 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   showCursor: true,
                   readOnly: true,
                   onTap: () => {
-                    Future<Null>.delayed(const Duration(seconds: 1)).then(
-                        (value) =>
+                    Future<Null>.delayed(const Duration(milliseconds: 500))
+                        .then((value) =>
                             Navigator.of(context).pushNamed('/listprovince'))
                   },
                 ),
