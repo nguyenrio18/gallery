@@ -18,6 +18,7 @@ import 'package:gallery/layout/image_placeholder.dart';
 import 'package:gallery/pages/category_list_item.dart';
 import 'package:gallery/pages/settings.dart';
 import 'package:gallery/pages/splash.dart';
+import 'package:gallery/services/user.dart';
 import 'package:gallery/studies/crane/app.dart';
 import 'package:gallery/studies/crane/colors.dart';
 import 'package:gallery/studies/fortnightly/app.dart';
@@ -26,6 +27,7 @@ import 'package:gallery/studies/rally/colors.dart';
 import 'package:gallery/studies/shrine/app.dart';
 import 'package:gallery/studies/shrine/colors.dart';
 import 'package:gallery/studies/starter/app.dart';
+import 'package:gallery/utils/log.dart';
 
 const _horizontalPadding = 32.0;
 const _carouselItemMargin = 8.0;
@@ -690,6 +692,14 @@ class _CarouselState extends State<_Carousel>
     with SingleTickerProviderStateMixin {
   PageController _controller;
   int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    UserService.setBoxItemValue(UserService.hiveUserKeyLoggedIn, true);
+    printInfo('UserService.setBoxItemValue', 'loggedin = true');
+  }
 
   @override
   void didChangeDependencies() {
