@@ -9,7 +9,8 @@ import 'package:gallery/utils/log.dart';
 
 class AuthService {
   static Future<Map<String, String>> getHeaders(bool hasAuthorization) async {
-    var token = await UserService.getBoxItemValue('token');
+    var token = await UserService.getBoxItemValue(UserService.hiveUserKeyToken)
+        as String;
 
     Map<String, String> headers;
     if (hasAuthorization) {
@@ -26,7 +27,7 @@ class AuthService {
     return headers;
   }
 
-  static Future<void> handleSignInPassword(
+  static Future<String> handleSignInPassword(
       String email, String password) async {
     try {
       final auth = FirebaseAuth.instance;
@@ -44,6 +45,8 @@ class AuthService {
       final token = await UserService.authenticateUser(email, user);
 
       await UserService.setBoxItemValue(UserService.hiveUserKeyToken, token);
+
+      return currentUser.uid;
     } catch (e) {
       if (e is PlatformException &&
           e.message != null &&

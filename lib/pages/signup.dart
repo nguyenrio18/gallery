@@ -130,9 +130,9 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
       printInfo('person', person);
 
       UserService.getBoxItemValue(UserService.hiveUserKeyUserType)
-          .then((value) {
+          .then((dynamic value) {
             person.authorities = List<String>.filled(0, null, growable: true);
-            person.authorities.add(value);
+            person.authorities.add(value as String);
           })
           .then((value) => AuthService.handleSignUpPassword(person))
           .then((value) => showInSnackBar(

@@ -13,6 +13,7 @@ import 'package:hive/hive.dart';
 class UserService {
   static const String hiveUserKeyToken = 'token';
   static const String hiveUserKeyUserType = 'usertype';
+  static const String hiveUserKeyLoggedIn = 'loggedin';
 
   static Future<String> authenticateUser(
       String username, FirebaseUser user) async {
@@ -59,16 +60,16 @@ class UserService {
     }
   }
 
-  static Future<String> getBoxItemValue(String key) async {
-    var box = await Hive.openBox<String>('user');
+  static Future<dynamic> getBoxItemValue(String key) async {
+    var box = await Hive.openBox<dynamic>('user');
     // var box = Hive.box<String>('user');
 
-    var value = box.get(key);
+    dynamic value = box.get(key);
     return value;
   }
 
-  static Future<Null> setBoxItemValue(String key, String value) async {
-    var box = await Hive.openBox<String>('user');
+  static Future<Null> setBoxItemValue(String key, dynamic value) async {
+    var box = await Hive.openBox<dynamic>('user');
     // var box = Hive.box<String>('user');
 
     if (value != null) {

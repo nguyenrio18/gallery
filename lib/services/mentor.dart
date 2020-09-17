@@ -21,7 +21,7 @@ class MentorService {
     final decodedList = jsonDecode(responseBody) as List;
 
     var result = decodedList.map((dynamic tagJson) {
-      var mentor = Mentor.fromJson(tagJson);
+      var mentor = Mentor.fromMap(tagJson as Map<String, dynamic>);
       return mentor;
     }).toList();
 
@@ -41,7 +41,7 @@ class MentorService {
 
     if (response.statusCode == 200) {
       var map = json.decode(response.body) as Map<String, dynamic>;
-      return Mentor.fromJson(map);
+      return Mentor.fromMap(map);
     } else {
       throw Exception('Failed to update album.');
     }
@@ -63,7 +63,7 @@ class MentorService {
     );
     if (response.statusCode == 201) {
       var map = json.decode(response.body) as Map<String, dynamic>;
-      return Mentor.fromJson(map);
+      return Mentor.fromMap(map);
     } else {
       throw Exception('Failed to load album');
     }
@@ -79,7 +79,7 @@ class MentorService {
 
     if (response.statusCode == 200) {
       var map = json.decode(response.body) as Map<String, dynamic>;
-      return Mentor.fromJson(map);
+      return Mentor.fromMap(map);
     } else {
       throw Exception('Failed to delete album.');
     }

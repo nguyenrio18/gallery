@@ -23,9 +23,13 @@ Future<void> main() async {
 
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  var token = await UserService.getBoxItemValue('token');
+  var token =
+      await UserService.getBoxItemValue(UserService.hiveUserKeyToken) as String;
+  var loggedin =
+      await UserService.getBoxItemValue(UserService.hiveUserKeyLoggedIn)
+          as bool;
 
-  if (token == null) {
+  if (token == null || loggedin != true) {
     // runApp(const GalleryApp(initialRoute: '/infomentor'));
     runApp(const GalleryApp(initialRoute: '/login'));
   } else {
