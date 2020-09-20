@@ -34,17 +34,17 @@ class AuthService {
 
       var result = await auth.signInWithEmailAndPassword(
           email: email, password: password);
-      final user = result.user;
+      final fbuser = result.user;
 
-      assert(user != null);
-      assert(await user.getIdToken() != null);
+      assert(fbuser != null);
+      assert(await fbuser.getIdToken() != null);
 
       final currentUser = await auth.currentUser();
-      assert(user.uid == currentUser.uid);
+      assert(fbuser.uid == currentUser.uid);
 
-      final token = await UserService.authenticateUser(email, user);
+      await UserService.authenticate(email, '\$8${fbuser.uid}6\$');
 
-      await UserService.setBoxItemValue(UserService.hiveUserKeyToken, token);
+      await UserService.getAccount();
 
       return currentUser.uid;
     } catch (e) {
@@ -55,7 +55,7 @@ class AuthService {
         try {
           printError('NoImplementationFound', e);
           final token =
-              await UserService.authenticate(email, '\$${Constants.words}\$');
+              await UserService.authenticate(email, '\$8${Constants.words}6\$');
 
           await UserService.setBoxItemValue(
               UserService.hiveUserKeyToken, token);
@@ -98,6 +98,7 @@ class AuthService {
       assert(registedUser != null);
       assert(await registedUser.getIdToken() != null);
 
+      user.password = '\$8${registedUser.uid}6\$';
       await UserService.register(user);
 
       return registedUser;

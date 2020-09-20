@@ -12,9 +12,12 @@ import 'package:gallery/l10n/gallery_localizations.dart';
 import 'package:gallery/layout/adaptive.dart';
 import 'package:gallery/layout/image_placeholder.dart';
 import 'package:gallery/layout/text_scale.dart';
+import 'package:gallery/models/user.dart';
 import 'package:gallery/services/auth.dart';
+import 'package:gallery/services/user.dart';
 import 'package:gallery/studies/rally/app.dart';
 import 'package:gallery/studies/rally/colors.dart';
+import 'package:gallery/utils/api_exception.dart';
 import 'package:gallery/utils/log.dart';
 
 class LoginPage extends StatefulWidget {
@@ -28,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController =
       TextEditingController(text: 'nugyen1999@gmail.com');
   final TextEditingController _passwordController =
-      TextEditingController(text: '123456');
+      TextEditingController(text: '12345678');
   final TextEditingController _phoneNumberController =
       TextEditingController(text: '0984251186');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -92,8 +95,16 @@ class __MainViewState extends State<_MainView> {
       widget.formKey.currentState.save();
 
       AuthService.handleSignInPassword(_account.email, _account.password)
-          .then((result) {
-        Navigator.of(context).pushNamed('/');
+          .then((result) async {
+        var userType =
+            await UserService.getBoxItemValue(UserService.hiveUserKeyUserType)
+                as String;
+        if (userType != User.roleMentor && userType != User.roleMentee) {
+          showInSnackBarContactAdmin(
+              ErrorCode.noUserType, true, widget.scaffoldKey);
+        } else {
+          await Navigator.of(context).pushNamed('/');
+        }
       }).catchError((dynamic e) {
         printError('handleSignInPassword', e);
 
@@ -123,6 +134,9 @@ class __MainViewState extends State<_MainView> {
           } else {
             showInSnackBar(e.toString(), true, widget.scaffoldKey);
           }
+        } else if (e is ApiException) {
+          showInSnackBar('Lỗi đăng nhập trên hệ thống (${e.title})', true,
+              widget.scaffoldKey);
         } else {
           showInSnackBar(e.toString(), true, widget.scaffoldKey);
         }
@@ -151,7 +165,7 @@ class __MainViewState extends State<_MainView> {
     }
   }
 
-  void _showAlertDialogWithTitle(BuildContext context) {
+  void _showAlertDialogOTP(BuildContext context) {
     final theme = Theme.of(context);
     final dialogTextStyle = theme.textTheme.subtitle1
         .copyWith(color: theme.textTheme.caption.color);
@@ -304,7 +318,7 @@ class __MainViewState extends State<_MainView> {
               _FlatButton(
                 text: 'NHẬN MÃ 6 SỐ',
                 onTap: () {
-                  _showAlertDialogWithTitle(context);
+                  _showAlertDialogOTP(context);
                 },
               ),
             ],
@@ -737,7 +751,7 @@ class _GhostButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlineButton(
-      borderSide: const BorderSide(color: RallyColors.white60),
+      borderSide: const BorderSide(color: RallyColors.buttonColor),
       color: RallyColors.buttonColor,
       highlightedBorderColor: RallyColors.buttonColor,
       focusColor: RallyColors.buttonColor.withOpacity(0.8),

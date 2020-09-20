@@ -7,7 +7,7 @@ class User {
   static const String roleMentee = 'ROLE_MENTEE';
 
   bool activated;
-  List<String> authorities; // List<String>.filled(0, null, growable: true);
+  List<String> authorities;
   String createdBy;
   DateTime createdDate;
   String email;
@@ -107,7 +107,8 @@ class User {
 
     return User(
       activated: map['activated'] as bool,
-      authorities: map['authorities'] as List<String>,
+      authorities: (map['authorities'] as List<dynamic>)
+          .cast<String>(), // as List<String>,
       createdBy: map['createdBy'] as String,
       createdDate: DateTime.tryParse(map['createdDate'] as String),
       email: map['email'] as String,

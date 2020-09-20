@@ -26,3 +26,18 @@ void showInSnackBar(
     ),
   ));
 }
+
+enum ErrorCode { noUserType }
+
+void showInSnackBarContactAdmin(
+    ErrorCode errorCode, bool isError, GlobalKey<ScaffoldState> scaffoldKey) {
+  switch (errorCode) {
+    case ErrorCode.noUserType:
+      showInSnackBar(
+          'Không xác định được loại người dùng, xin vui lòng liên hệ người quản trị.',
+          true,
+          scaffoldKey);
+      break;
+    default:
+  }
+}
