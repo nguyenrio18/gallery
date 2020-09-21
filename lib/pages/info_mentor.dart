@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 
 import 'package:gallery/l10n/gallery_localizations.dart';
 import 'package:gallery/models/mentor.dart';
+import 'package:gallery/models/province.dart';
 import 'package:gallery/services/user.dart';
 import 'package:gallery/services/mentor.dart';
 import 'package:gallery/utils/log.dart';
@@ -121,9 +122,15 @@ class InfoMentorFormState extends State<InfoMentorForm> {
                   onTap: () => {
                     Future<Null>.delayed(const Duration(milliseconds: 500))
                         .then((value) async {
-                      var result = await Navigator.of(context)
-                          .pushNamed('/listprovince');
-                      showInSnackBar(result as String, false, _scaffoldKey);
+                      try {
+                        var result = await Navigator.of(context).pushNamed(
+                            '/listprovince',
+                            arguments: '5f68709d9ce42979c2ec88da') as Province;
+                        printInfo('provinceId', result.id);
+                        showInSnackBar(result.id, false, _scaffoldKey);
+                      } catch (e) {
+                        showInSnackBar('Back press', false, _scaffoldKey);
+                      }
                     })
                   },
                 ),
