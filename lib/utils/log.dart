@@ -27,14 +27,14 @@ void showInSnackBar(
   ));
 }
 
-enum ErrorCode { noUserType }
+enum ErrorCode { undeterminedUser }
 
 void showInSnackBarContactAdmin(
     ErrorCode errorCode, bool isError, GlobalKey<ScaffoldState> scaffoldKey) {
   switch (errorCode) {
-    case ErrorCode.noUserType:
+    case ErrorCode.undeterminedUser:
       showInSnackBar(
-          'Không xác định được loại người dùng, xin vui lòng liên hệ người quản trị.',
+          'Không xác định được dữ liệu người dùng, xin vui lòng liên hệ người quản trị.',
           true,
           scaffoldKey);
       break;

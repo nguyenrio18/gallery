@@ -4,17 +4,13 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 
 import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/models/user.dart';
-
-import 'package:gallery/services/auth.dart';
-import 'package:gallery/utils/api_exception.dart';
+import 'package:gallery/models/mentor.dart';
+import 'package:gallery/services/user.dart';
+import 'package:gallery/services/mentor.dart';
 import 'package:gallery/utils/log.dart';
-
-// BEGIN textFieldDemo
 
 class InfoMentorPage extends StatelessWidget {
   const InfoMentorPage();
@@ -26,30 +22,45 @@ class InfoMentorPage extends StatelessWidget {
         automaticallyImplyLeading: true,
         title: const Text('THÔNG TIN GIÁO VIÊN'),
       ),
-      body: const TextFormFieldDemo(),
+      body: const InfoMentorForm(),
     );
   }
 }
 
-class TextFormFieldDemo extends StatefulWidget {
-  const TextFormFieldDemo({Key key}) : super(key: key);
+class InfoMentorForm extends StatefulWidget {
+  const InfoMentorForm({Key key}) : super(key: key);
 
   @override
-  TextFormFieldDemoState createState() => TextFormFieldDemoState();
+  InfoMentorFormState createState() => InfoMentorFormState();
 }
 
-class TextFormFieldDemoState extends State<TextFormFieldDemo> {
+class InfoMentorFormState extends State<InfoMentorForm> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  User person = User();
+  bool createNew;
+  Mentor mentor;
 
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    super.initState();
+
+    UserService.getBoxItemValue(UserService.hiveUserKeyId)
+        .then((dynamic userId) async {
+      createNew = false;
+      mentor = await MentorService.getMentorByUserId(userId as String);
+    }).catchError((dynamic e) {
+      createNew = true;
+      mentor = Mentor();
+    });
+  }
+
   void _handleSubmitted() {
     final form = _formKey.currentState;
-    person.cleanServerMessage();
+    mentor.cleanServerMessage();
     if (!form.validate()) {
       _autoValidateMode =
           AutovalidateMode.always; // Start validating on every change.
@@ -58,27 +69,27 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
     } else {
       form.save();
       // showInSnackBar(GalleryLocalizations.of(context)
-      //     .demoTextFieldNameHasPhoneNumber(person.firstName, person.lastName));
+      //     .demoTextFieldNameHasPhoneNumber(mentor.firstName, mentor.lastName));
 
-      printInfo('person', person);
+      printInfo('mentor', mentor);
 
-      AuthService.handleSignUpPassword(person)
-          .then((value) => showInSnackBar(
-              'Đăng ký thành công, bạn đã có thể đăng nhập với tài khoản này!',
-              false,
-              _scaffoldKey))
-          .catchError((dynamic e) {
-        if ((e is PlatformException &&
-                e.code == 'ERROR_EMAIL_ALREADY_IN_USE') ||
-            (e is ApiException && e.message == 'error.userexists')) {
-          person.emailMessage = 'Email đã được sử dụng';
-          _formKey.currentState.validate();
-          showInSnackBar(person.emailMessage, true, _scaffoldKey);
-        } else {
-          printError('handleSignUpPassword', e);
-          showInSnackBar(e.toString(), true, _scaffoldKey);
-        }
-      });
+      // AuthService.handleSignUpPassword(mentor)
+      //     .then((value) => showInSnackBar(
+      //         'Đăng ký thành công, bạn đã có thể đăng nhập với tài khoản này!',
+      //         false,
+      //         _scaffoldKey))
+      //     .catchError((dynamic e) {
+      //   if ((e is PlatformException &&
+      //           e.code == 'ERROR_EMAIL_ALREADY_IN_USE') ||
+      //       (e is ApiException && e.message == 'error.userexists')) {
+      //     mentor.emailMessage = 'Email đã được sử dụng';
+      //     _formKey.currentState.validate();
+      //     showInSnackBar(mentor.emailMessage, true, _scaffoldKey);
+      //   } else {
+      //     printError('handleSignUpPassword', e);
+      //     showInSnackBar(e.toString(), true, _scaffoldKey);
+      //   }
+      // });
     }
   }
 
@@ -109,8 +120,11 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   readOnly: true,
                   onTap: () => {
                     Future<Null>.delayed(const Duration(milliseconds: 500))
-                        .then((value) =>
-                            Navigator.of(context).pushNamed('/listprovince'))
+                        .then((value) async {
+                      var result = await Navigator.of(context)
+                          .pushNamed('/listprovince');
+                      showInSnackBar(result as String, false, _scaffoldKey);
+                    })
                   },
                 ),
                 sizedBoxSpace,
@@ -165,5 +179,3 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
     );
   }
 }
-
-// END

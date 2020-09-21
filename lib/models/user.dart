@@ -62,10 +62,6 @@ class User {
     return map;
   }
 
-  void cleanServerMessage() {
-    emailMessage = null;
-  }
-
   User copyWith({
     bool activated,
     List<String> authorities,
@@ -174,5 +170,9 @@ class User {
         lastName.hashCode ^
         login.hashCode ^
         password.hashCode;
+  }
+
+  void cleanServerMessage() {
+    emailMessage = null;
   }
 }

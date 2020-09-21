@@ -5,29 +5,33 @@ import 'package:gallery/constants.dart';
 import 'package:gallery/services/auth.dart';
 import 'package:gallery/models/mentor.dart';
 import 'package:http/http.dart' as http;
+import 'package:gallery/utils/api_exception.dart';
 
 class MentorService {
-  static Future<List<Mentor>> fetchMentors() async {
+  static Future<List<Mentor>> getMentors() async {
     final response = await http.get(
       '${Constants.urlApi}/mentors',
       headers: await AuthService.getHeaders(true),
     );
-    if (response.statusCode == 200) {
-      return decodeMentor(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Mentor.fromJsonList(response.bodyBytes);
     } else {
-      throw Exception('Unable to fetch data from the REST API');
+      throw ApiException.fromJson(response.body);
     }
   }
 
-  static List<Mentor> decodeMentor(String responseBody) {
-    final decodedList = jsonDecode(responseBody) as List;
+  static Future<Mentor> getMentorByUserId(String userId) async {
+    final response = await http.get(
+      '${Constants.urlApi}/mentors/by-user-id/$userId',
+      headers: await AuthService.getHeaders(true),
+    );
 
-    var result = decodedList.map((dynamic tagJson) {
-      var mentor = Mentor.fromMap(tagJson as Map<String, dynamic>);
-      return mentor;
-    }).toList();
-
-    return result;
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Mentor.fromJson(response.body);
+    } else {
+      throw ApiException.fromJson(response.body);
+    }
   }
 
   static Future<Mentor> updateMentor(String title) async {
@@ -49,7 +53,7 @@ class MentorService {
     }
   }
 
-  static Future<Mentor> sendMentor(
+  static Future<Mentor> insertMentor(
       String title, int id, String imageUrl, int quantity) async {
     final response = await http.post(
       'url',
@@ -71,7 +75,7 @@ class MentorService {
     }
   }
 
-  static Future<Mentor> deleteAlbum(int id) async {
+  static Future<Mentor> deleteMentor(int id) async {
     final response = await http.delete(
       'url/$id',
       headers: <String, String>{

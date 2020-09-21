@@ -1,11 +1,16 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
+import 'package:gallery/models/center.dart';
+import 'package:gallery/models/district.dart';
+import 'package:gallery/models/mentor_location.dart';
+import 'package:gallery/models/province.dart';
+import 'package:gallery/models/user.dart';
 import 'package:gallery/models/model_plh.dart';
 
 class Mentor {
   String id;
-  String uid;
   String fullName;
   String email;
   String phoneNumber;
@@ -14,14 +19,13 @@ class Mentor {
   double rate;
   String description;
   // photo: ;
-  ModelPlh user;
-  ModelPlh province;
-  ModelPlh district;
-  List<ModelPlh> centers;
-  List<ModelPlh> mentorLocations;
+  User user;
+  Province province;
+  District district;
+  List<Center> centers;
+  List<MentorLocation> mentorLocations;
   Mentor({
     this.id,
-    this.uid,
     this.fullName,
     this.email,
     this.phoneNumber,
@@ -38,7 +42,6 @@ class Mentor {
 
   Mentor copyWith({
     String id,
-    String uid,
     String fullName,
     String email,
     String phoneNumber,
@@ -46,15 +49,14 @@ class Mentor {
     DateTime startDate,
     double rate,
     String description,
-    ModelPlh user,
-    ModelPlh province,
-    ModelPlh district,
-    List<ModelPlh> centers,
-    List<ModelPlh> mentorLocations,
+    User user,
+    Province province,
+    District district,
+    List<Center> centers,
+    List<MentorLocation> mentorLocations,
   }) {
     return Mentor(
       id: id ?? this.id,
-      uid: uid ?? this.uid,
       fullName: fullName ?? this.fullName,
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -73,7 +75,6 @@ class Mentor {
   Map<String, dynamic> toMap() {
     var map = {
       'id': id,
-      'uid': uid,
       'fullName': fullName,
       'email': email,
       'phoneNumber': phoneNumber,
@@ -95,7 +96,6 @@ class Mentor {
 
     return Mentor(
       id: map['id'] as String,
-      uid: map['uid'] as String,
       fullName: map['fullName'] as String,
       email: map['email'] as String,
       phoneNumber: map['phoneNumber'] as String,
@@ -103,13 +103,13 @@ class Mentor {
       startDate: DateTime.tryParse(map['startDate'] as String),
       rate: map['rate'] as double,
       description: map['description'] as String,
-      user: ModelPlh.fromMap(map['user'] as Map<String, dynamic>),
-      province: ModelPlh.fromMap(map['province'] as Map<String, dynamic>),
-      district: ModelPlh.fromMap(map['district'] as Map<String, dynamic>),
-      centers: List<ModelPlh>.from(map['centers']
+      user: User.fromMap(map['user'] as Map<String, dynamic>),
+      province: Province.fromMap(map['province'] as Map<String, dynamic>),
+      district: District.fromMap(map['district'] as Map<String, dynamic>),
+      centers: List<Center>.from(map['centers']
               ?.map((dynamic x) => ModelPlh.fromMap(x as Map<String, dynamic>))
           as List<ModelPlh>),
-      mentorLocations: List<ModelPlh>.from(map['mentorLocations']
+      mentorLocations: List<MentorLocation>.from(map['mentorLocations']
               ?.map((dynamic x) => ModelPlh.fromMap(x as Map<String, dynamic>))
           as List<ModelPlh>),
     );
@@ -120,9 +120,19 @@ class Mentor {
   factory Mentor.fromJson(String source) =>
       Mentor.fromMap(json.decode(source) as Map<String, dynamic>);
 
+  static List<Mentor> fromJsonList(Uint8List source) {
+    final jsonList = json.decode(utf8.decode(source)) as List;
+
+    var result = jsonList.map((dynamic json) {
+      return Mentor.fromMap(json as Map<String, dynamic>);
+    }).toList();
+
+    return result;
+  }
+
   @override
   String toString() {
-    return 'Mentor(id: $id, uid: $uid, fullName: $fullName, email: $email, phoneNumber: $phoneNumber, birthdate: $birthdate, startDate: $startDate, rate: $rate, description: $description, user: $user, province: $province, district: $district, centers: $centers, mentorLocations: $mentorLocations)';
+    return 'Mentor(id: $id, fullName: $fullName, email: $email, phoneNumber: $phoneNumber, birthdate: $birthdate, startDate: $startDate, rate: $rate, description: $description, user: $user, province: $province, district: $district, centers: $centers, mentorLocations: $mentorLocations)';
   }
 
   @override
@@ -132,7 +142,6 @@ class Mentor {
 
     return o is Mentor &&
         o.id == id &&
-        o.uid == uid &&
         o.fullName == fullName &&
         o.email == email &&
         o.phoneNumber == phoneNumber &&
@@ -150,7 +159,6 @@ class Mentor {
   @override
   int get hashCode {
     return id.hashCode ^
-        uid.hashCode ^
         fullName.hashCode ^
         email.hashCode ^
         phoneNumber.hashCode ^
@@ -164,4 +172,6 @@ class Mentor {
         centers.hashCode ^
         mentorLocations.hashCode;
   }
+
+  void cleanServerMessage() {}
 }

@@ -15,6 +15,7 @@ import 'package:gallery/layout/text_scale.dart';
 import 'package:gallery/models/user.dart';
 import 'package:gallery/services/auth.dart';
 import 'package:gallery/services/user.dart';
+import 'package:gallery/services/mentor.dart';
 import 'package:gallery/studies/rally/app.dart';
 import 'package:gallery/studies/rally/colors.dart';
 import 'package:gallery/utils/api_exception.dart';
@@ -99,9 +100,21 @@ class __MainViewState extends State<_MainView> {
         var userType =
             await UserService.getBoxItemValue(UserService.hiveUserKeyUserType)
                 as String;
-        if (userType != User.roleMentor && userType != User.roleMentee) {
+        var userId =
+            await UserService.getBoxItemValue(UserService.hiveUserKeyId)
+                as String;
+        if (userId == null ||
+            userId.isEmpty ||
+            (userType != User.roleMentor && userType != User.roleMentee)) {
           showInSnackBarContactAdmin(
-              ErrorCode.noUserType, true, widget.scaffoldKey);
+              ErrorCode.undeterminedUser, true, widget.scaffoldKey);
+        } else if (userType == User.roleMentor) {
+          try {
+            await MentorService.getMentorByUserId(userId);
+          } catch (e) {
+            await Navigator.of(context).pushNamed('/infomentor');
+          }
+        } else if (userType == User.roleMentee) {
         } else {
           await Navigator.of(context).pushNamed('/');
         }
