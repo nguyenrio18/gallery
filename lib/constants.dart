@@ -30,6 +30,6 @@ class Constants {
   static final String words = '94QAvZvrdGQBmKG0KUVoncS0KMJ3';
   static final String version = '0.0.1';
   static final String urlApi = env == Environment.dev
-      ? 'http://localhost:8686/api'
-      : 'http://34.96.142.89:8686/api';
+      ? 'http://localhost:1337/graphql'
+      : 'http://holaadmin.fullstack8.com:1337/graphql';
 }

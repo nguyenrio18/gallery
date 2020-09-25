@@ -7,6 +7,7 @@ import 'package:gallery/services/auth.dart';
 import 'package:gallery/utils/api_exception.dart';
 import 'package:gallery/utils/json.dart';
 import 'package:gallery/utils/log.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 
@@ -42,7 +43,50 @@ class UserService {
     }
   }
 
+  static String registerUser() {
+    return r'''
+      mutation Register($input: UsersPermissionsRegisterInput!) {
+        register(input: $input) {
+          jwt
+          user {
+            id
+            username
+            email
+            confirmed
+            blocked
+            role {
+              id
+              name
+              description
+              type
+            }
+          }
+        }
+      }
+    ''';
+  }
+
   static Future<bool> register(User user) async {
+    var link = HttpLink(uri: Constants.urlApi);
+    // you can also use headers for authorization etc.
+    var client = GraphQLClient(link: link, cache: InMemoryCache());
+
+    var variables2 = {
+      'input': {
+        'email': user.email,
+        'password': user.password,
+        'username': user.email
+      }
+    };
+    var mutate = MutationOptions(
+      documentNode: gql(UserService.registerUser()),
+      variables: variables2,
+    );
+
+    var result = await client.mutate(mutate);
+    print(result);
+    ///// NEW CODE FOR GRAPHQL
+
     var userRemovedNull = JsonUtil.removeFieldWithNullValue(user.toMap());
 
     final response = await http.post(
