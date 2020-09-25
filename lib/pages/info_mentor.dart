@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:gallery/l10n/gallery_localizations.dart';
 import 'package:gallery/models/mentor.dart';
 import 'package:gallery/models/province.dart';
+import 'package:gallery/models/district.dart';
 import 'package:gallery/services/user.dart';
 import 'package:gallery/services/mentor.dart';
 import 'package:gallery/utils/log.dart';
@@ -37,6 +38,8 @@ class InfoMentorForm extends StatefulWidget {
 
 class InfoMentorFormState extends State<InfoMentorForm> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController _provinceController;
+  TextEditingController _districtController;
 
   bool createNew;
   Mentor mentor;
@@ -44,6 +47,11 @@ class InfoMentorFormState extends State<InfoMentorForm> {
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  InfoMentorFormState() {
+    _provinceController = TextEditingController();
+    _districtController = TextEditingController();
+  }
 
   @override
   void initState() {
@@ -53,6 +61,13 @@ class InfoMentorFormState extends State<InfoMentorForm> {
         .then((dynamic userId) async {
       createNew = false;
       mentor = await MentorService.getMentorByUserId(userId as String);
+
+      if (mentor.province != null) {
+        _provinceController.text = mentor.province.provinceName;
+      }
+      if (mentor.district != null) {
+        _districtController.text = mentor.district.districtName;
+      }
     }).catchError((dynamic e) {
       createNew = true;
       mentor = Mentor();
@@ -112,6 +127,7 @@ class InfoMentorFormState extends State<InfoMentorForm> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 TextFormField(
+                  controller: _provinceController,
                   cursorColor: cursorColor,
                   decoration: const InputDecoration(
                     filled: true,
@@ -122,20 +138,21 @@ class InfoMentorFormState extends State<InfoMentorForm> {
                   onTap: () => {
                     Future<Null>.delayed(const Duration(milliseconds: 500))
                         .then((value) async {
-                      try {
-                        var result = await Navigator.of(context).pushNamed(
-                            '/listprovince',
-                            arguments: '5f68709d9ce42979c2ec88da') as Province;
-                        printInfo('provinceId', result.id);
-                        showInSnackBar(result.id, false, _scaffoldKey);
-                      } catch (e) {
-                        showInSnackBar('Back press', false, _scaffoldKey);
+                      var result = await Navigator.of(context).pushNamed(
+                          '/listprovince',
+                          arguments: mentor.province != null
+                              ? mentor.province.id
+                              : null) as Province;
+                      if (result != null) {
+                        mentor.province = result;
+                        _provinceController.text = result.provinceName;
                       }
                     })
                   },
                 ),
                 sizedBoxSpace,
                 TextFormField(
+                  controller: _districtController,
                   cursorColor: cursorColor,
                   decoration: const InputDecoration(
                     filled: true,
@@ -145,8 +162,17 @@ class InfoMentorFormState extends State<InfoMentorForm> {
                   readOnly: true,
                   onTap: () => {
                     Future<Null>.delayed(const Duration(milliseconds: 500))
-                        .then((value) =>
-                            Navigator.of(context).pushNamed('/listprovince'))
+                        .then((value) async {
+                      var result = await Navigator.of(context).pushNamed(
+                          '/listdistrict',
+                          arguments: mentor.district != null
+                              ? mentor.district.id
+                              : null) as District;
+                      if (result != null) {
+                        mentor.district = result;
+                        _districtController.text = result.districtName;
+                      }
+                    })
                   },
                 ),
                 sizedBoxSpace,

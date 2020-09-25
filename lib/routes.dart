@@ -5,6 +5,7 @@ import 'package:gallery/pages/demo.dart';
 import 'package:gallery/pages/home.dart';
 import 'package:gallery/pages/info_mentor.dart';
 import 'package:gallery/pages/list_province.dart';
+import 'package:gallery/pages/list_district.dart';
 import 'package:gallery/pages/login.dart';
 import 'package:gallery/pages/signup.dart';
 import 'package:gallery/pages/usertype.dart';
@@ -85,6 +86,10 @@ class RouteConfiguration {
     Path(
       r'^/listprovince',
       (context, match) => const ListProvincePage(),
+    ),
+    Path(
+      r'^/listdistrict',
+      (context, match) => const ListDistrictPage(),
     ),
     Path(
       r'^/',
