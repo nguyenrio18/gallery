@@ -42,9 +42,8 @@ class AuthService {
       final currentUser = await auth.currentUser();
       assert(fbuser.uid == currentUser.uid);
 
-      await UserService.authenticate(email, '\$8${fbuser.uid}6\$');
-
-      await UserService.getAccount();
+      var userId = await UserService.authenticate(email, '\$8${fbuser.uid}6\$');
+      await UserService.getUserById(userId);
 
       return currentUser.uid;
     } catch (e) {
@@ -54,7 +53,9 @@ class AuthService {
           e.message.toString().contains('No implementation found')) {
         try {
           printError('NoImplementationFound', e);
-          await UserService.authenticate(email, '\$8${Constants.words}6\$');
+          var userId =
+              await UserService.authenticate(email, '\$8${Constants.words}6\$');
+          await UserService.getUserById(userId);
         } catch (e2) {
           printError('UserService.authenticate', e2);
           throw e;
@@ -95,7 +96,8 @@ class AuthService {
       assert(await registedUser.getIdToken() != null);
 
       user.password = '\$8${registedUser.uid}6\$';
-      await UserService.register(user);
+      var userId = await UserService.register(user);
+      await UserService.updateUser(userId, user);
 
       return registedUser;
     } catch (e) {

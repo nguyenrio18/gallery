@@ -3,8 +3,6 @@ import 'package:gallery/services/user.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class GraphQLUtil {
-  static const enableWebsockets = false;
-
   static GraphQLClient _graphQLClientHttpLink;
   static GraphQLClient _graphQLClientAuthLink;
   static DateTime _tokenExpiration;

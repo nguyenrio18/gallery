@@ -112,7 +112,7 @@ class User {
       fullName: map['fullName'] as String,
       dateOfBirth: DateTime.tryParse(map['dateOfBirth'] as String),
       dateStart: DateTime.tryParse(map['dateStart'] as String),
-      rate: map['rate'] as double,
+      rate: map['rate'] != null ? map['rate'] * 1.0 as double : null,
       description: map['description'] as String,
       priority: map['priority'] as int,
     );

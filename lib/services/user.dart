@@ -1,13 +1,10 @@
 import 'dart:async';
 
-import 'package:gallery/constants.dart';
 import 'package:gallery/models/user.dart';
-import 'package:gallery/services/auth.dart';
 import 'package:gallery/utils/api_exception.dart';
 import 'package:gallery/utils/json.dart';
 import 'package:gallery/utils/graphql.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 
 class UserService {
@@ -21,7 +18,7 @@ class UserService {
   static const String hiveUserKeyToken = 'token';
   static const String hiveUserKeyLoggedIn = 'loggedin';
 
-  static Future<bool> authenticate(String username, String password) async {
+  static Future<String> authenticate(String username, String password) async {
     var variables = {
       'input': {
         'identifier': username,
@@ -36,19 +33,6 @@ class UserService {
             jwt
             user {
               id
-              username
-              email
-              fullName
-              phoneNumber
-              userType
-              confirmed
-              blocked
-              role {
-                id
-                name
-                description
-                type
-              }
             }
           }
         }
@@ -59,28 +43,18 @@ class UserService {
     var client = await GraphQLUtil.getGraphQLClient(false);
     var queryResult = await client.mutate(mutate);
 
-    String id;
     if (!queryResult.hasException) {
       var token = queryResult.data['login']['jwt'] as String;
       await UserService.setBoxItemValue(UserService.hiveUserKeyToken, token);
-
       GraphQLUtil.setupTokenExpiration();
 
-      id = queryResult.data['login']['user']['id'] as String;
-      await UserService.setBoxItemValue(UserService.hiveUserKeyId, id);
-      var username = queryResult.data['login']['user']['username'] as String;
-      await UserService.setBoxItemValue(
-          UserService.hiveUserKeyUsername, username);
-      var email = queryResult.data['login']['user']['email'] as String;
-      await UserService.setBoxItemValue(UserService.hiveUserKeyEmail, email);
-
-      return true;
+      return queryResult.data['login']['user']['id'] as String;
     } else {
       throw ApiException.fromQueryResult(queryResult);
     }
   }
 
-  static Future<bool> register(User user) async {
+  static Future<String> register(User user) async {
     var variables = {
       'input': {
         'email': user.email,
@@ -95,16 +69,6 @@ class UserService {
             jwt
             user {
               id
-              username
-              email
-              confirmed
-              blocked
-              role {
-                id
-                name
-                description
-                type
-              }
             }
           }
         }
@@ -115,22 +79,12 @@ class UserService {
     var client = await GraphQLUtil.getGraphQLClient(false);
     var queryResult = await client.mutate(mutate);
 
-    String id;
     if (!queryResult.hasException) {
       var token = queryResult.data['register']['jwt'] as String;
       await UserService.setBoxItemValue(UserService.hiveUserKeyToken, token);
-
       GraphQLUtil.setupTokenExpiration();
 
-      id = queryResult.data['register']['user']['id'] as String;
-      await UserService.setBoxItemValue(UserService.hiveUserKeyId, id);
-      var username = queryResult.data['register']['user']['username'] as String;
-      await UserService.setBoxItemValue(
-          UserService.hiveUserKeyUsername, username);
-      var email = queryResult.data['register']['user']['email'] as String;
-      await UserService.setBoxItemValue(UserService.hiveUserKeyEmail, email);
-
-      return updateUser(id, user);
+      return queryResult.data['register']['user']['id'] as String;
     } else {
       throw ApiException.fromQueryResult(queryResult);
     }
@@ -151,8 +105,12 @@ class UserService {
           mutation UpdateUser($input: updateUserInput!) {
             updateUser(input: $input) {
               user {
+                id
+                username
                 email
                 phoneNumber
+                fullName
+                userType
               }
             }
           }
@@ -164,6 +122,8 @@ class UserService {
       var queryResult = await graphqlClient.mutate(mutateUpdateUser);
 
       if (!queryResult.hasException) {
+        await setHiveBoxUser(queryResult, 'updateUser');
+
         return true;
       } else {
         throw ApiException.fromQueryResult(queryResult);
@@ -173,28 +133,65 @@ class UserService {
     return false;
   }
 
-  static Future<User> getAccount() async {
-    final response = await http.get(
-      '${Constants.urlApi}/account',
-      headers: await AuthService.getHeaders(true),
+  static Future<void> setHiveBoxUser(
+      QueryResult queryResult, String mutationName) async {
+    var parent = mutationName != null
+        ? queryResult.data[mutationName]['user'] as Map<String, dynamic>
+        : queryResult.data['user'] as Map<String, dynamic>;
+
+    var id = parent['id'] as String;
+    await UserService.setBoxItemValue(UserService.hiveUserKeyId, id);
+    var username = parent['username'] as String;
+    await UserService.setBoxItemValue(
+        UserService.hiveUserKeyUsername, username);
+    var email = parent['email'] as String;
+    await UserService.setBoxItemValue(UserService.hiveUserKeyEmail, email);
+    var phoneNumber = parent['phoneNumber'] as String;
+    await UserService.setBoxItemValue(
+        UserService.hiveUserKeyPhoneNumber, phoneNumber);
+    var fullName = parent['fullName'] as String;
+    await UserService.setBoxItemValue(
+        UserService.hiveUserKeyFullName, fullName);
+    var userType = parent['userType'] as int;
+    await UserService.setBoxItemValue(
+        UserService.hiveUserKeyUserType, userType);
+  }
+
+  static Future<User> getUserById(String id) async {
+    var variables = {
+      'id': id,
+    };
+    var query = QueryOptions(
+      documentNode: gql(r'''
+        query User($id: ID!) {
+          user(id: $id) {
+            id
+            username
+            email
+            phoneNumber
+            userType
+            fullName
+            dateOfBirth
+            dateStart
+            rate
+            description
+            priority
+          }
+        }
+      '''),
+      variables: variables,
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var account = User.fromJson(response.body);
+    var client = await GraphQLUtil.getGraphQLClient(true);
+    var queryResult = await client.query(query);
 
-      await UserService.setBoxItemValue(UserService.hiveUserKeyId, account.id);
-      await UserService.setBoxItemValue(
-          UserService.hiveUserKeyFullName, account.fullName);
-      await UserService.setBoxItemValue(
-          UserService.hiveUserKeyEmail, account.email);
-      await UserService.setBoxItemValue(
-          UserService.hiveUserKeyPhoneNumber, account.phoneNumber);
-      await UserService.setBoxItemValue(
-          UserService.hiveUserKeyUserType, account.userType);
+    if (!queryResult.hasException) {
+      await setHiveBoxUser(queryResult, null);
 
-      return account;
+      var user = User.fromMap(queryResult.data['user'] as Map<String, dynamic>);
+      return user;
     } else {
-      throw ApiException.fromJson(response.body);
+      throw ApiException.fromQueryResult(queryResult);
     }
   }
 
