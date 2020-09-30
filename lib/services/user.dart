@@ -6,20 +6,20 @@ import 'package:gallery/models/user.dart';
 import 'package:gallery/services/auth.dart';
 import 'package:gallery/utils/api_exception.dart';
 import 'package:gallery/utils/json.dart';
-import 'package:gallery/utils/log.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 
 class UserService {
-  static const String hiveUserKeyToken = 'token';
-  static const String hiveUserKeyUserType = 'usertype';
-  static const String hiveUserKeyLoggedIn = 'loggedin';
-
   static const String hiveUserKeyId = 'id';
+  static const String hiveUserKeyUsername = 'username';
   static const String hiveUserKeyEmail = 'email';
-  static const String hiveUserKeyName = 'name';
+  static const String hiveUserKeyUserType = 'userType';
+  static const String hiveUserKeyFullName = 'fullName';
   static const String hiveUserKeyPhoneNumber = 'phoneNumber';
+
+  static const String hiveUserKeyToken = 'token';
+  static const String hiveUserKeyLoggedIn = 'loggedin';
 
   static Future<String> authenticate(String username, String password) async {
     final response = await http.post(
@@ -43,35 +43,12 @@ class UserService {
     }
   }
 
-  static String registerUser() {
-    return r'''
-      mutation Register($input: UsersPermissionsRegisterInput!) {
-        register(input: $input) {
-          jwt
-          user {
-            id
-            username
-            email
-            confirmed
-            blocked
-            role {
-              id
-              name
-              description
-              type
-            }
-          }
-        }
-      }
-    ''';
-  }
-
   static Future<bool> register(User user) async {
-    var link = HttpLink(uri: Constants.urlApi);
+    var httpLink = HttpLink(uri: Constants.urlApi);
     // you can also use headers for authorization etc.
-    var client = GraphQLClient(link: link, cache: InMemoryCache());
+    var client = GraphQLClient(link: httpLink, cache: InMemoryCache());
 
-    var variables2 = {
+    var variables = {
       'input': {
         'email': user.email,
         'password': user.password,
@@ -79,29 +56,95 @@ class UserService {
       }
     };
     var mutate = MutationOptions(
-      documentNode: gql(UserService.registerUser()),
-      variables: variables2,
+      documentNode: gql(r'''
+        mutation Register($input: UsersPermissionsRegisterInput!) {
+          register(input: $input) {
+            jwt
+            user {
+              id
+              username
+              email
+              confirmed
+              blocked
+              role {
+                id
+                name
+                description
+                type
+              }
+            }
+          }
+        }
+      '''),
+      variables: variables,
     );
 
     var result = await client.mutate(mutate);
-    print(result);
-    ///// NEW CODE FOR GRAPHQL
 
-    var userRemovedNull = JsonUtil.removeFieldWithNullValue(user.toMap());
-
-    final response = await http.post(
-      '${Constants.urlApi}/register',
-      headers: await AuthService.getHeaders(false),
-      body: jsonEncode(userRemovedNull),
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
+    String id;
+    if (!result.hasException) {
+      var token = result.data['register']['jwt'] as String;
+      await UserService.setBoxItemValue(UserService.hiveUserKeyToken, token);
+      id = result.data['register']['user']['id'] as String;
+      await UserService.setBoxItemValue(UserService.hiveUserKeyId, id);
+      var username = result.data['register']['user']['username'] as String;
+      await UserService.setBoxItemValue(
+          UserService.hiveUserKeyUsername, username);
+      var email = result.data['register']['user']['email'] as String;
+      await UserService.setBoxItemValue(UserService.hiveUserKeyEmail, email);
     } else {
-      final jsonData = json.decode(response.body) as Map<String, dynamic>;
-      printError('register', jsonData);
-      throw ApiException.fromJson(response.body);
+      var apiException = ApiException(
+          message: result.exception.graphqlErrors.first.extensions.toString());
+      throw apiException;
     }
+
+    user.password = null;
+    var userRemovedNull = JsonUtil.removeFieldWithNullValue(user.toMap());
+    if (id != null && id.isNotEmpty) {
+      var variablesUpdateUser = {
+        'input': {
+          'where': {'id': id},
+          'data': userRemovedNull
+        }
+      };
+      var mutateUpdateUser = MutationOptions(
+        documentNode: gql(r'''
+          mutation UpdateUser($input: updateUserInput!) {
+            updateUser(input: $input) {
+              user {
+                email
+                phoneNumber
+              }
+            }
+          }
+        '''),
+        variables: variablesUpdateUser,
+      );
+
+      var token =
+          await UserService.getBoxItemValue(UserService.hiveUserKeyToken)
+              as String;
+      final authLink = AuthLink(
+        getToken: () async => 'Bearer ' + token,
+      );
+
+      final link2 = authLink.concat(httpLink);
+
+      var client2 = GraphQLClient(link: link2, cache: InMemoryCache());
+
+      var resultUpdateUser = await client2.mutate(mutateUpdateUser);
+
+      if (!resultUpdateUser.hasException) {
+        return true;
+      } else {
+        var apiException = ApiException(
+            message:
+                result.exception.graphqlErrors.first.extensions.toString());
+        throw apiException;
+      }
+    }
+
+    return false;
   }
 
   static Future<User> getAccount() async {
@@ -115,22 +158,13 @@ class UserService {
 
       await UserService.setBoxItemValue(UserService.hiveUserKeyId, account.id);
       await UserService.setBoxItemValue(
-          UserService.hiveUserKeyName, account.firstName);
+          UserService.hiveUserKeyFullName, account.fullName);
       await UserService.setBoxItemValue(
           UserService.hiveUserKeyEmail, account.email);
       await UserService.setBoxItemValue(
-          UserService.hiveUserKeyPhoneNumber, account.lastName);
-
-      var isMentor = account.authorities.contains(User.roleMentor);
-      var isMentee = account.authorities.contains(User.roleMentee);
-      if (isMentor) {
-        await UserService.setBoxItemValue(
-            UserService.hiveUserKeyUserType, User.roleMentor);
-      }
-      if (isMentee) {
-        await UserService.setBoxItemValue(
-            UserService.hiveUserKeyUserType, User.roleMentee);
-      }
+          UserService.hiveUserKeyPhoneNumber, account.phoneNumber);
+      await UserService.setBoxItemValue(
+          UserService.hiveUserKeyUserType, account.userType);
 
       return account;
     } else {

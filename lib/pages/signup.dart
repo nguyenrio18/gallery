@@ -131,8 +131,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
 
       UserService.getBoxItemValue(UserService.hiveUserKeyUserType)
           .then((dynamic value) {
-            person.authorities = List<String>.filled(0, null, growable: true);
-            person.authorities.add(value as String);
+            person.userType = value as int;
           })
           .then((value) => AuthService.handleSignUpPassword(person))
           .then((value) => showInSnackBar(
@@ -142,7 +141,8 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
           .catchError((dynamic e) {
             if ((e is PlatformException &&
                     e.code == 'ERROR_EMAIL_ALREADY_IN_USE') ||
-                (e is ApiException && e.message == 'error.userexists')) {
+                (e is ApiException &&
+                    e.message.contains('Auth.form.error.email.taken'))) {
               person.emailMessage = 'Email đã được sử dụng';
               _formKey.currentState.validate();
               showInSnackBar(person.emailMessage, true, _scaffoldKey);
@@ -215,7 +215,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                         GalleryLocalizations.of(context).demoTextFieldNameField,
                   ),
                   onSaved: (value) {
-                    person.firstName = value.trim();
+                    person.fullName = value.trim();
                   },
                   validator: _validateName,
                 ),
@@ -233,7 +233,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   ),
                   keyboardType: TextInputType.phone,
                   onSaved: (value) {
-                    person.lastName = value.trim();
+                    person.phoneNumber = value.trim();
                   },
                   maxLength: 14,
                   maxLengthEnforced: false,
@@ -259,7 +259,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   keyboardType: TextInputType.emailAddress,
                   onSaved: (value) {
                     person.email = value.trim();
-                    person.login = value.trim();
+                    person.username = value.trim();
                   },
                   validator: (value) {
                     return person.emailMessage;

@@ -99,22 +99,23 @@ class __MainViewState extends State<_MainView> {
           .then((result) async {
         var userType =
             await UserService.getBoxItemValue(UserService.hiveUserKeyUserType)
-                as String;
+                as int;
         var userId =
             await UserService.getBoxItemValue(UserService.hiveUserKeyId)
                 as String;
         if (userId == null ||
             userId.isEmpty ||
-            (userType != User.roleMentor && userType != User.roleMentee)) {
+            (userType != User.userTypeMentor &&
+                userType != User.userTypeMentee)) {
           showInSnackBarContactAdmin(
               ErrorCode.undeterminedUser, true, widget.scaffoldKey);
-        } else if (userType == User.roleMentor) {
+        } else if (userType == User.userTypeMentor) {
           try {
             await MentorService.getMentorByUserId(userId);
           } catch (e) {
             await Navigator.of(context).pushNamed('/infomentor');
           }
-        } else if (userType == User.roleMentee) {
+        } else if (userType == User.userTypeMentee) {
         } else {
           await Navigator.of(context).pushNamed('/');
         }
@@ -148,7 +149,7 @@ class __MainViewState extends State<_MainView> {
             showInSnackBar(e.toString(), true, widget.scaffoldKey);
           }
         } else if (e is ApiException) {
-          showInSnackBar('Lỗi đăng nhập trên hệ thống (${e.title})', true,
+          showInSnackBar('Lỗi quá trình đăng nhập trên máy chủ!', true,
               widget.scaffoldKey);
         } else {
           showInSnackBar(e.toString(), true, widget.scaffoldKey);

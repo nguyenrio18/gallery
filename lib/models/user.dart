@@ -1,123 +1,120 @@
 import 'dart:convert';
 
 class User {
-  static const String roleUser = 'ROLE_USER';
-  static const String roleAdmin = 'ROLE_ADMIN';
-  static const String roleMentor = 'ROLE_MENTOR';
-  static const String roleMentee = 'ROLE_MENTEE';
+  static const int userTypeMentor = 1;
+  static const int userTypeMentee = 2;
 
-  bool activated;
-  List<String> authorities;
-  String createdBy;
-  DateTime createdDate;
+  String id;
+  String username;
+  String password;
   String email;
   String emailMessage;
-  String firstName;
-  String id;
-  String imageUrl;
-  String langKey;
-  String lastModifiedBy;
-  DateTime lastModifiedDate;
-  String lastName;
-  String login;
-  String password;
+  String provider;
+  bool confirmed;
+  bool blocked;
+  String phoneNumber;
+  int userType;
+  String fullName;
+  DateTime dateOfBirth;
+  DateTime dateStart;
+  double rate;
+  String description;
+  int priority;
 
   User({
-    this.activated,
-    this.authorities,
-    this.createdBy,
-    this.createdDate,
-    this.email,
-    this.emailMessage,
-    this.firstName,
     this.id,
-    this.imageUrl,
-    this.langKey,
-    this.lastModifiedBy,
-    this.lastModifiedDate,
-    this.lastName,
-    this.login,
+    this.username,
     this.password,
+    this.email,
+    this.provider,
+    this.confirmed,
+    this.blocked,
+    this.phoneNumber,
+    this.userType,
+    this.fullName,
+    this.dateOfBirth,
+    this.dateStart,
+    this.rate,
+    this.description,
+    this.priority,
   });
+
+  User copyWith({
+    String id,
+    String username,
+    String password,
+    String email,
+    String provider,
+    bool confirmed,
+    bool blocked,
+    String phoneNumber,
+    int userType,
+    String fullName,
+    DateTime dateOfBirth,
+    DateTime dateStart,
+    double rate,
+    String description,
+    int priority,
+  }) {
+    return User(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      password: password ?? this.password,
+      email: email ?? this.email,
+      provider: provider ?? this.provider,
+      confirmed: confirmed ?? this.confirmed,
+      blocked: blocked ?? this.blocked,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      userType: userType ?? this.userType,
+      fullName: fullName ?? this.fullName,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      dateStart: dateStart ?? this.dateStart,
+      rate: rate ?? this.rate,
+      description: description ?? this.description,
+      priority: priority ?? this.priority,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     var map = {
-      'activated': activated,
-      'authorities': authorities,
-      'createdBy': createdBy,
-      'createdDate': createdDate != null ? createdDate.toIso8601String() : null,
-      'email': email,
-      'emailMessage': emailMessage,
-      'firstName': firstName,
       'id': id,
-      'imageUrl': imageUrl,
-      'langKey': langKey,
-      'lastModifiedBy': lastModifiedBy,
-      'lastModifiedDate':
-          lastModifiedDate != null ? lastModifiedDate.toIso8601String() : null,
-      'lastName': lastName,
-      'login': login,
+      'username': username,
       'password': password,
+      'email': email,
+      'provider': provider,
+      'confirmed': confirmed,
+      'blocked': blocked,
+      'phoneNumber': phoneNumber,
+      'userType': userType,
+      'fullName': fullName,
+      'dateOfBirth': dateOfBirth != null ? dateOfBirth.toIso8601String() : null,
+      'dateStart': dateStart != null ? dateStart.toIso8601String() : null,
+      'rate': rate,
+      'description': description,
+      'priority': priority,
     };
     return map;
-  }
-
-  User copyWith({
-    bool activated,
-    List<String> authorities,
-    String createdBy,
-    DateTime createdDate,
-    String email,
-    String emailMessage,
-    String firstName,
-    String id,
-    String imageUrl,
-    String langKey,
-    String lastModifiedBy,
-    DateTime lastModifiedDate,
-    String lastName,
-    String login,
-    String password,
-  }) {
-    return User(
-      activated: activated ?? this.activated,
-      authorities: authorities ?? this.authorities,
-      createdBy: createdBy ?? this.createdBy,
-      createdDate: createdDate ?? this.createdDate,
-      email: email ?? this.email,
-      emailMessage: emailMessage ?? this.emailMessage,
-      firstName: firstName ?? this.firstName,
-      id: id ?? this.id,
-      imageUrl: imageUrl ?? this.imageUrl,
-      langKey: langKey ?? this.langKey,
-      lastModifiedBy: lastModifiedBy ?? this.lastModifiedBy,
-      lastModifiedDate: lastModifiedDate ?? this.lastModifiedDate,
-      lastName: lastName ?? this.lastName,
-      login: login ?? this.login,
-      password: password ?? this.password,
-    );
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
 
     return User(
-      activated: map['activated'] as bool,
-      authorities: (map['authorities'] as List<dynamic>)
-          .cast<String>(), // as List<String>,
-      createdBy: map['createdBy'] as String,
-      createdDate: DateTime.tryParse(map['createdDate'] as String),
-      email: map['email'] as String,
-      emailMessage: map['emailMessage'] as String,
-      firstName: map['firstName'] as String,
       id: map['id'] as String,
-      imageUrl: map['imageUrl'] as String,
-      langKey: map['langKey'] as String,
-      lastModifiedBy: map['lastModifiedBy'] as String,
-      lastModifiedDate: DateTime.tryParse(map['lastModifiedDate'] as String),
-      lastName: map['lastName'] as String,
-      login: map['login'] as String,
+      username: map['username'] as String,
       password: map['password'] as String,
+      email: map['email'] as String,
+      provider: map['provider'] as String,
+      confirmed: map['confirmed'] as bool,
+      blocked: map['blocked'] as bool,
+      phoneNumber: map['phoneNumber'] as String,
+      userType: map['userType'] as int,
+      fullName: map['fullName'] as String,
+      dateOfBirth: DateTime.tryParse(map['dateOfBirth'] as String),
+      dateStart: DateTime.tryParse(map['dateStart'] as String),
+      rate: map['rate'] as double,
+      description: map['description'] as String,
+      priority: map['priority'] as int,
     );
   }
 
@@ -128,7 +125,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(activated: $activated, authorities: $authorities, createdBy: $createdBy, createdDate: $createdDate, email: $email, emailMessage: $emailMessage, firstName: $firstName, id: $id, imageUrl: $imageUrl, langKey: $langKey, lastModifiedBy: $lastModifiedBy, lastModifiedDate: $lastModifiedDate, lastName: $lastName, login: $login, password: $password)';
+    return 'User(id: $id, username: $username, password: $password, email: $email, provider: $provider, confirmed: $confirmed, blocked: $blocked, phoneNumber: $phoneNumber, userType: $userType, fullName: $fullName, dateOfBirth: $dateOfBirth, dateStart: $dateStart, rate: $rate, description: $description, priority: $priority)';
   }
 
   @override
@@ -136,40 +133,40 @@ class User {
     if (identical(this, o)) return true;
 
     return o is User &&
-        o.activated == activated &&
-        o.authorities == authorities &&
-        o.createdBy == createdBy &&
-        o.createdDate == createdDate &&
-        o.email == email &&
-        o.emailMessage == emailMessage &&
-        o.firstName == firstName &&
         o.id == id &&
-        o.imageUrl == imageUrl &&
-        o.langKey == langKey &&
-        o.lastModifiedBy == lastModifiedBy &&
-        o.lastModifiedDate == lastModifiedDate &&
-        o.lastName == lastName &&
-        o.login == login &&
-        o.password == password;
+        o.username == username &&
+        o.password == password &&
+        o.email == email &&
+        o.provider == provider &&
+        o.confirmed == confirmed &&
+        o.blocked == blocked &&
+        o.phoneNumber == phoneNumber &&
+        o.userType == userType &&
+        o.fullName == fullName &&
+        o.dateOfBirth == dateOfBirth &&
+        o.dateStart == dateStart &&
+        o.rate == rate &&
+        o.description == description &&
+        o.priority == priority;
   }
 
   @override
   int get hashCode {
-    return activated.hashCode ^
-        authorities.hashCode ^
-        createdBy.hashCode ^
-        createdDate.hashCode ^
+    return id.hashCode ^
+        username.hashCode ^
+        password.hashCode ^
         email.hashCode ^
-        emailMessage.hashCode ^
-        firstName.hashCode ^
-        id.hashCode ^
-        imageUrl.hashCode ^
-        langKey.hashCode ^
-        lastModifiedBy.hashCode ^
-        lastModifiedDate.hashCode ^
-        lastName.hashCode ^
-        login.hashCode ^
-        password.hashCode;
+        provider.hashCode ^
+        confirmed.hashCode ^
+        blocked.hashCode ^
+        phoneNumber.hashCode ^
+        userType.hashCode ^
+        fullName.hashCode ^
+        dateOfBirth.hashCode ^
+        dateStart.hashCode ^
+        rate.hashCode ^
+        description.hashCode ^
+        priority.hashCode;
   }
 
   void cleanServerMessage() {

@@ -30,7 +30,7 @@ class UserTypePage extends StatelessWidget {
                 initiallyExpanded: false,
                 onTap: () {
                   UserService.setBoxItemValue(
-                          UserService.hiveUserKeyUserType, User.roleMentee)
+                          UserService.hiveUserKeyUserType, User.userTypeMentee)
                       .then((value) => Future<Null>.delayed(
                           const Duration(milliseconds: 500)))
                       .then((value) =>
@@ -47,7 +47,7 @@ class UserTypePage extends StatelessWidget {
                 initiallyExpanded: false,
                 onTap: () {
                   UserService.setBoxItemValue(
-                          UserService.hiveUserKeyUserType, User.roleMentor)
+                          UserService.hiveUserKeyUserType, User.userTypeMentor)
                       .then((value) => Future<Null>.delayed(
                           const Duration(milliseconds: 500)))
                       .then((value) =>

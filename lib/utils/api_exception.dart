@@ -2,50 +2,48 @@ import 'dart:convert';
 
 class ApiException implements Exception {
   final String message;
-  final String title;
-  final int status;
-  final String type;
+  final String name;
 
   ApiException({
     this.message,
-    this.title,
-    this.status,
-    this.type,
+    this.name,
   });
 
   ApiException copyWith({
     String message,
-    String title,
-    int status,
-    String type,
+    String name,
   }) {
     return ApiException(
       message: message ?? this.message,
-      title: title ?? this.title,
-      status: status ?? this.status,
-      type: type ?? this.type,
+      name: name ?? this.name,
     );
   }
 
   Map<String, dynamic> toMap() {
     var map = {
       'message': message,
-      'title': title,
-      'status': status,
-      'type': type,
+      'name': name,
     };
     return map;
   }
 
   factory ApiException.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
+    if (map == null || map['errors'] == null) return null;
 
-    return ApiException(
-      message: map['message'] as String,
-      title: map['title'] as String,
-      status: map['status'] as int,
-      type: map['type'] as String,
-    );
+    var firstError = map['errors'][0] as Map<String, dynamic>;
+    if (firstError['message'] == 'Bad Request') {
+      return ApiException(
+        message: map['extensions']['exception']['data']['message'][0]
+            ['messages'][0]['message'] as String,
+        name: map['extensions']['exception']['data']['message'][0]['messages']
+            [0]['id'] as String,
+      );
+    } else {
+      return ApiException(
+        message: map['extensions']['exception']['message'] as String,
+        name: map['extensions']['exception']['name'] as String,
+      );
+    }
   }
 
   String toJson() => json.encode(toMap());
@@ -54,23 +52,15 @@ class ApiException implements Exception {
       ApiException.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() {
-    return 'ApiException(message: $message, title: $title, status: $status, type: $type)';
-  }
+  String toString() => 'ApiException(message: $message, name: $name)';
 
   @override
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
 
-    return o is ApiException &&
-        o.message == message &&
-        o.title == title &&
-        o.status == status &&
-        o.type == type;
+    return o is ApiException && o.message == message && o.name == name;
   }
 
   @override
-  int get hashCode {
-    return message.hashCode ^ title.hashCode ^ status.hashCode ^ type.hashCode;
-  }
+  int get hashCode => message.hashCode ^ name.hashCode;
 }
