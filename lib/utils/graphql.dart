@@ -1,50 +1,54 @@
 import 'package:gallery/constants.dart';
+import 'package:gallery/services/user.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-class GraphQLConfiguration {
+class GraphQLUtil {
   static const enableWebsockets = false;
 
-  static final GraphQLConfiguration _instance =
-      GraphQLConfiguration._internal();
-  static GraphQLClient client;
+  static GraphQLClient _graphQLClientHttpLink;
+  static GraphQLClient _graphQLClientAuthLink;
+  static DateTime _tokenExpiration;
 
-  static Link setupGraphLink() {
-    final httpLink = HttpLink(uri: Constants.urlApi);
+  static DateTime setupTokenExpiration() {
+    _tokenExpiration = DateTime.now()
+        .add(const Duration(days: 1))
+        .add(const Duration(hours: -1));
+    return _tokenExpiration;
+  }
 
-    final authLink = AuthLink(
-      // ignore: undefined_identifier
-      getToken: () async => 'Bearer $YOUR_PERSONAL_ACCESS_TOKEN',
-    );
+  static Future<GraphQLClient> getGraphQLClient(bool useAuthLink) async {
+    if (!useAuthLink) {
+      if (GraphQLUtil._graphQLClientHttpLink != null) {
+        return GraphQLUtil._graphQLClientHttpLink;
+      }
 
-    var link = authLink.concat(httpLink);
-
-    if (GraphQLConfiguration.enableWebsockets) {
-      final websocketLink = WebSocketLink(
-        url: 'ws://localhost:8080/ws/graphql',
-        config: const SocketClientConfig(
-            autoReconnect: true, inactivityTimeout: Duration(seconds: 15)),
+      var httpLink = HttpLink(uri: Constants.urlApi);
+      GraphQLUtil._graphQLClientHttpLink = GraphQLClient(
+        link: httpLink,
+        cache: InMemoryCache(),
       );
 
-      link = link.concat(websocketLink);
+      return GraphQLUtil._graphQLClientHttpLink;
+    } else {
+      if (GraphQLUtil._graphQLClientAuthLink != null &&
+          DateTime.now().isBefore(GraphQLUtil._tokenExpiration)) {
+        return GraphQLUtil._graphQLClientAuthLink;
+      }
+
+      var httpLink = HttpLink(uri: Constants.urlApi);
+      var token =
+          await UserService.getBoxItemValue(UserService.hiveUserKeyToken)
+              as String;
+      var authLink = AuthLink(
+        getToken: () async => 'Bearer ' + token,
+      );
+      var link = authLink.concat(httpLink);
+      GraphQLUtil._graphQLClientAuthLink = GraphQLClient(
+        link: link,
+        cache: InMemoryCache(),
+      );
+
+      return GraphQLUtil._graphQLClientAuthLink;
     }
-
-    return link;
   }
-
-  factory GraphQLConfiguration() {
-    GraphQLConfiguration.client = GraphQLClient(
-      cache: OptimisticCache(
-        dataIdFromObject: typenameDataIdFromObject,
-      ),
-      link: setupGraphLink(),
-    );
-
-    // final clientNotifier = ValueNotifier<GraphQLClient>(GraphQLConfiguration.client);
-
-    return _instance;
-  }
-
-  GraphQLConfiguration._internal();
-
-  static GraphQLConfiguration get instance => _instance;
 }

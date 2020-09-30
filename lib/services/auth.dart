@@ -54,11 +54,7 @@ class AuthService {
           e.message.toString().contains('No implementation found')) {
         try {
           printError('NoImplementationFound', e);
-          final token =
-              await UserService.authenticate(email, '\$8${Constants.words}6\$');
-
-          await UserService.setBoxItemValue(
-              UserService.hiveUserKeyToken, token);
+          await UserService.authenticate(email, '\$8${Constants.words}6\$');
         } catch (e2) {
           printError('UserService.authenticate', e2);
           throw e;

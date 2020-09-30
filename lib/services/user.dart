@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:gallery/constants.dart';
 import 'package:gallery/models/user.dart';
 import 'package:gallery/services/auth.dart';
 import 'package:gallery/utils/api_exception.dart';
 import 'package:gallery/utils/json.dart';
+import 'package:gallery/utils/graphql.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
@@ -21,33 +21,66 @@ class UserService {
   static const String hiveUserKeyToken = 'token';
   static const String hiveUserKeyLoggedIn = 'loggedin';
 
-  static Future<String> authenticate(String username, String password) async {
-    final response = await http.post(
-      '${Constants.urlApi}/authenticate',
-      headers: await AuthService.getHeaders(false),
-      body: jsonEncode(<String, String>{
-        'username': username,
+  static Future<bool> authenticate(String username, String password) async {
+    var variables = {
+      'input': {
+        'identifier': username,
         'password': password,
-      }),
+        'provider': 'local'
+      }
+    };
+    var mutate = MutationOptions(
+      documentNode: gql(r'''
+        mutation Login($input: UsersPermissionsLoginInput!) {
+          login(input: $input) {
+            jwt
+            user {
+              id
+              username
+              email
+              fullName
+              phoneNumber
+              userType
+              confirmed
+              blocked
+              role {
+                id
+                name
+                description
+                type
+              }
+            }
+          }
+        }
+      '''),
+      variables: variables,
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+    var client = await GraphQLUtil.getGraphQLClient(false);
+    var queryResult = await client.mutate(mutate);
 
-      var token = jsonData['id_token'] as String;
+    String id;
+    if (!queryResult.hasException) {
+      var token = queryResult.data['login']['jwt'] as String;
       await UserService.setBoxItemValue(UserService.hiveUserKeyToken, token);
 
-      return token;
+      GraphQLUtil.setupTokenExpiration();
+
+      id = queryResult.data['login']['user']['id'] as String;
+      await UserService.setBoxItemValue(UserService.hiveUserKeyId, id);
+      var username = queryResult.data['login']['user']['username'] as String;
+      await UserService.setBoxItemValue(
+          UserService.hiveUserKeyUsername, username);
+      var email = queryResult.data['login']['user']['email'] as String;
+      await UserService.setBoxItemValue(UserService.hiveUserKeyEmail, email);
+
+      return true;
     } else {
-      throw ApiException.fromJson(response.body);
+      throw ApiException.fromQueryResult(queryResult);
     }
   }
 
   static Future<bool> register(User user) async {
-    var httpLink = HttpLink(uri: Constants.urlApi);
-    // you can also use headers for authorization etc.
-    var client = GraphQLClient(link: httpLink, cache: InMemoryCache());
-
     var variables = {
       'input': {
         'email': user.email,
@@ -79,25 +112,31 @@ class UserService {
       variables: variables,
     );
 
-    var result = await client.mutate(mutate);
+    var client = await GraphQLUtil.getGraphQLClient(false);
+    var queryResult = await client.mutate(mutate);
 
     String id;
-    if (!result.hasException) {
-      var token = result.data['register']['jwt'] as String;
+    if (!queryResult.hasException) {
+      var token = queryResult.data['register']['jwt'] as String;
       await UserService.setBoxItemValue(UserService.hiveUserKeyToken, token);
-      id = result.data['register']['user']['id'] as String;
+
+      GraphQLUtil.setupTokenExpiration();
+
+      id = queryResult.data['register']['user']['id'] as String;
       await UserService.setBoxItemValue(UserService.hiveUserKeyId, id);
-      var username = result.data['register']['user']['username'] as String;
+      var username = queryResult.data['register']['user']['username'] as String;
       await UserService.setBoxItemValue(
           UserService.hiveUserKeyUsername, username);
-      var email = result.data['register']['user']['email'] as String;
+      var email = queryResult.data['register']['user']['email'] as String;
       await UserService.setBoxItemValue(UserService.hiveUserKeyEmail, email);
-    } else {
-      var apiException = ApiException(
-          message: result.exception.graphqlErrors.first.extensions.toString());
-      throw apiException;
-    }
 
+      return updateUser(id, user);
+    } else {
+      throw ApiException.fromQueryResult(queryResult);
+    }
+  }
+
+  static Future<bool> updateUser(String id, User user) async {
     user.password = null;
     var userRemovedNull = JsonUtil.removeFieldWithNullValue(user.toMap());
     if (id != null && id.isNotEmpty) {
@@ -121,26 +160,13 @@ class UserService {
         variables: variablesUpdateUser,
       );
 
-      var token =
-          await UserService.getBoxItemValue(UserService.hiveUserKeyToken)
-              as String;
-      final authLink = AuthLink(
-        getToken: () async => 'Bearer ' + token,
-      );
+      var graphqlClient = await GraphQLUtil.getGraphQLClient(true);
+      var queryResult = await graphqlClient.mutate(mutateUpdateUser);
 
-      final link2 = authLink.concat(httpLink);
-
-      var client2 = GraphQLClient(link: link2, cache: InMemoryCache());
-
-      var resultUpdateUser = await client2.mutate(mutateUpdateUser);
-
-      if (!resultUpdateUser.hasException) {
+      if (!queryResult.hasException) {
         return true;
       } else {
-        var apiException = ApiException(
-            message:
-                result.exception.graphqlErrors.first.extensions.toString());
-        throw apiException;
+        throw ApiException.fromQueryResult(queryResult);
       }
     }
 

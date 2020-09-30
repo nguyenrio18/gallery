@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:graphql_flutter/graphql_flutter.dart';
+
 class ApiException implements Exception {
   final String message;
   final String name;
@@ -8,6 +10,11 @@ class ApiException implements Exception {
     this.message,
     this.name,
   });
+
+  ApiException.fromQueryResult(QueryResult graphqlResult)
+      : name = graphqlResult.exception.graphqlErrors.first.message,
+        message =
+            graphqlResult.exception.graphqlErrors.first.extensions.toString();
 
   ApiException copyWith({
     String message,
