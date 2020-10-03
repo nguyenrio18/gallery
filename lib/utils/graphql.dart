@@ -11,26 +11,30 @@ class GraphQLUtil {
     _tokenExpiration = DateTime.now()
         .add(const Duration(days: 1))
         .add(const Duration(hours: -1));
+
+    // Need to renew authLink for _graphQLClientAuthLink
+    _graphQLClientAuthLink = null;
+
     return _tokenExpiration;
   }
 
   static Future<GraphQLClient> getGraphQLClient(bool useAuthLink) async {
     if (!useAuthLink) {
-      if (GraphQLUtil._graphQLClientHttpLink != null) {
-        return GraphQLUtil._graphQLClientHttpLink;
+      if (_graphQLClientHttpLink != null) {
+        return _graphQLClientHttpLink;
       }
 
       var httpLink = HttpLink(uri: Constants.urlApi);
-      GraphQLUtil._graphQLClientHttpLink = GraphQLClient(
+      _graphQLClientHttpLink = GraphQLClient(
         link: httpLink,
         cache: InMemoryCache(),
       );
 
-      return GraphQLUtil._graphQLClientHttpLink;
+      return _graphQLClientHttpLink;
     } else {
-      if (GraphQLUtil._graphQLClientAuthLink != null &&
-          DateTime.now().isBefore(GraphQLUtil._tokenExpiration)) {
-        return GraphQLUtil._graphQLClientAuthLink;
+      if (_graphQLClientAuthLink != null &&
+          DateTime.now().isBefore(_tokenExpiration)) {
+        return _graphQLClientAuthLink;
       }
 
       var httpLink = HttpLink(uri: Constants.urlApi);
@@ -38,15 +42,15 @@ class GraphQLUtil {
           await UserService.getBoxItemValue(UserService.hiveUserKeyToken)
               as String;
       var authLink = AuthLink(
-        getToken: () async => 'Bearer ' + token,
+        getToken: () async => 'Bearer $token',
       );
       var link = authLink.concat(httpLink);
-      GraphQLUtil._graphQLClientAuthLink = GraphQLClient(
+      _graphQLClientAuthLink = GraphQLClient(
         link: link,
         cache: InMemoryCache(),
       );
 
-      return GraphQLUtil._graphQLClientAuthLink;
+      return _graphQLClientAuthLink;
     }
   }
 }

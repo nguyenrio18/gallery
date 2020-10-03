@@ -4,6 +4,7 @@ import 'package:gallery/models/user.dart';
 import 'package:gallery/utils/api_exception.dart';
 import 'package:gallery/utils/json.dart';
 import 'package:gallery/utils/graphql.dart';
+import 'package:gallery/utils/log.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hive/hive.dart';
 
@@ -86,6 +87,7 @@ class UserService {
 
       return queryResult.data['register']['user']['id'] as String;
     } else {
+      printError('register', 'queryResult.hasException');
       throw ApiException.fromQueryResult(queryResult);
     }
   }
@@ -126,6 +128,7 @@ class UserService {
 
         return true;
       } else {
+        printError('updateUser', 'queryResult.hasException');
         throw ApiException.fromQueryResult(queryResult);
       }
     }
