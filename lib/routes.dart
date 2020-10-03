@@ -8,7 +8,7 @@ import 'package:gallery/pages/list_province.dart';
 import 'package:gallery/pages/list_district.dart';
 import 'package:gallery/pages/login.dart';
 import 'package:gallery/pages/signup.dart';
-import 'package:gallery/pages/usertype.dart';
+import 'package:gallery/pages/membertype.dart';
 import 'package:gallery/studies/crane/app.dart';
 import 'package:gallery/studies/fortnightly/app.dart';
 import 'package:gallery/studies/rally/app.dart';
@@ -76,8 +76,8 @@ class RouteConfiguration {
       (context, match) => const SignUpPage(),
     ),
     Path(
-      r'^/usertype',
-      (context, match) => const UserTypePage(),
+      r'^/membertype',
+      (context, match) => const MemberTypePage(),
     ),
     Path(
       r'^/infomentor',

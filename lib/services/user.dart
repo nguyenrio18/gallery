@@ -11,7 +11,7 @@ class UserService {
   static const String hiveUserKeyId = 'id';
   static const String hiveUserKeyUsername = 'username';
   static const String hiveUserKeyEmail = 'email';
-  static const String hiveUserKeyUserType = 'userType';
+  static const String hiveUserKeyMemberType = 'memberType';
   static const String hiveUserKeyFullName = 'fullName';
   static const String hiveUserKeyPhoneNumber = 'phoneNumber';
 
@@ -110,7 +110,7 @@ class UserService {
                 email
                 phoneNumber
                 fullName
-                userType
+                memberType
               }
             }
           }
@@ -152,9 +152,9 @@ class UserService {
     var fullName = parent['fullName'] as String;
     await UserService.setBoxItemValue(
         UserService.hiveUserKeyFullName, fullName);
-    var userType = parent['userType'] as int;
+    var memberType = parent['memberType'] as int;
     await UserService.setBoxItemValue(
-        UserService.hiveUserKeyUserType, userType);
+        UserService.hiveUserKeyMemberType, memberType);
   }
 
   static Future<User> getUserById(String id) async {
@@ -169,13 +169,8 @@ class UserService {
             username
             email
             phoneNumber
-            userType
+            memberType
             fullName
-            dateOfBirth
-            dateStart
-            rate
-            description
-            priority
           }
         }
       '''),

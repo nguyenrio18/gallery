@@ -97,25 +97,25 @@ class __MainViewState extends State<_MainView> {
 
       AuthService.handleSignInPassword(_account.email, _account.password)
           .then((result) async {
-        var userType =
-            await UserService.getBoxItemValue(UserService.hiveUserKeyUserType)
+        var memberType =
+            await UserService.getBoxItemValue(UserService.hiveUserKeyMemberType)
                 as int;
         var userId =
             await UserService.getBoxItemValue(UserService.hiveUserKeyId)
                 as String;
         if (userId == null ||
             userId.isEmpty ||
-            (userType != User.userTypeMentor &&
-                userType != User.userTypeMentee)) {
+            (memberType != User.memberTypeMentor &&
+                memberType != User.memberTypeMentee)) {
           showInSnackBarContactAdmin(
               ErrorCode.undeterminedUser, true, widget.scaffoldKey);
-        } else if (userType == User.userTypeMentor) {
+        } else if (memberType == User.memberTypeMentor) {
           try {
             await MentorService.getMentorByUserId(userId);
           } catch (e) {
             await Navigator.of(context).pushNamed('/infomentor');
           }
-        } else if (userType == User.userTypeMentee) {
+        } else if (memberType == User.memberTypeMentee) {
         } else {
           await Navigator.of(context).pushNamed('/');
         }
@@ -300,7 +300,7 @@ class __MainViewState extends State<_MainView> {
                   _GhostButton(
                     text: 'ĐĂNG KÝ',
                     onTap: () {
-                      Navigator.of(context).pushNamed('/usertype');
+                      Navigator.of(context).pushNamed('/membertype');
                     },
                   ),
                 ],

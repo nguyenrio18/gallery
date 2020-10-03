@@ -73,7 +73,8 @@ class AuthService {
       await auth.signOut();
 
       await UserService.setBoxItemValue(UserService.hiveUserKeyToken, null);
-      await UserService.setBoxItemValue(UserService.hiveUserKeyUserType, null);
+      await UserService.setBoxItemValue(
+          UserService.hiveUserKeyMemberType, null);
       await UserService.setBoxItemValue(UserService.hiveUserKeyLoggedIn, null);
     } catch (e) {
       rethrow;

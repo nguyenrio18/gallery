@@ -5,8 +5,8 @@ import 'package:gallery/services/user.dart';
 
 import 'category_list_item.dart';
 
-class UserTypePage extends StatelessWidget {
-  const UserTypePage();
+class MemberTypePage extends StatelessWidget {
+  const MemberTypePage();
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +29,8 @@ class UserTypePage extends StatelessWidget {
                 demos: List<GalleryDemo>(0),
                 initiallyExpanded: false,
                 onTap: () {
-                  UserService.setBoxItemValue(
-                          UserService.hiveUserKeyUserType, User.userTypeMentee)
+                  UserService.setBoxItemValue(UserService.hiveUserKeyMemberType,
+                          User.memberTypeMentee)
                       .then((value) => Future<Null>.delayed(
                           const Duration(milliseconds: 500)))
                       .then((value) =>
@@ -46,8 +46,8 @@ class UserTypePage extends StatelessWidget {
                 demos: List<GalleryDemo>(0),
                 initiallyExpanded: false,
                 onTap: () {
-                  UserService.setBoxItemValue(
-                          UserService.hiveUserKeyUserType, User.userTypeMentor)
+                  UserService.setBoxItemValue(UserService.hiveUserKeyMemberType,
+                          User.memberTypeMentor)
                       .then((value) => Future<Null>.delayed(
                           const Duration(milliseconds: 500)))
                       .then((value) =>

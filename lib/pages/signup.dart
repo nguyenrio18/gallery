@@ -129,9 +129,9 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
 
       printInfo('person', person);
 
-      UserService.getBoxItemValue(UserService.hiveUserKeyUserType)
+      UserService.getBoxItemValue(UserService.hiveUserKeyMemberType)
           .then((dynamic value) {
-            person.userType = value as int;
+            person.memberType = value as int;
           })
           .then((value) => AuthService.handleSignUpPassword(person))
           .then((value) => showInSnackBar(

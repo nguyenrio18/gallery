@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 class User {
-  static const int userTypeMentor = 1;
-  static const int userTypeMentee = 2;
+  static const int memberTypeMentor = 1;
+  static const int memberTypeMentee = 2;
 
   String id;
   String username;
@@ -13,7 +13,7 @@ class User {
   bool confirmed;
   bool blocked;
   String phoneNumber;
-  int userType;
+  int memberType;
   String fullName;
   DateTime dateOfBirth;
   DateTime dateStart;
@@ -30,7 +30,7 @@ class User {
     this.confirmed,
     this.blocked,
     this.phoneNumber,
-    this.userType,
+    this.memberType,
     this.fullName,
     this.dateOfBirth,
     this.dateStart,
@@ -48,7 +48,7 @@ class User {
     bool confirmed,
     bool blocked,
     String phoneNumber,
-    int userType,
+    int memberType,
     String fullName,
     DateTime dateOfBirth,
     DateTime dateStart,
@@ -65,7 +65,7 @@ class User {
       confirmed: confirmed ?? this.confirmed,
       blocked: blocked ?? this.blocked,
       phoneNumber: phoneNumber ?? this.phoneNumber,
-      userType: userType ?? this.userType,
+      memberType: memberType ?? this.memberType,
       fullName: fullName ?? this.fullName,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       dateStart: dateStart ?? this.dateStart,
@@ -85,7 +85,7 @@ class User {
       'confirmed': confirmed,
       'blocked': blocked,
       'phoneNumber': phoneNumber,
-      'userType': userType,
+      'memberType': memberType,
       'fullName': fullName,
       'dateOfBirth': dateOfBirth != null ? dateOfBirth.toIso8601String() : null,
       'dateStart': dateStart != null ? dateStart.toIso8601String() : null,
@@ -108,7 +108,7 @@ class User {
       confirmed: map['confirmed'] as bool,
       blocked: map['blocked'] as bool,
       phoneNumber: map['phoneNumber'] as String,
-      userType: map['userType'] as int,
+      memberType: map['memberType'] as int,
       fullName: map['fullName'] as String,
       dateOfBirth: DateTime.tryParse(map['dateOfBirth'] as String),
       dateStart: DateTime.tryParse(map['dateStart'] as String),
@@ -125,7 +125,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, username: $username, password: $password, email: $email, provider: $provider, confirmed: $confirmed, blocked: $blocked, phoneNumber: $phoneNumber, userType: $userType, fullName: $fullName, dateOfBirth: $dateOfBirth, dateStart: $dateStart, rate: $rate, description: $description, priority: $priority)';
+    return 'User(id: $id, username: $username, password: $password, email: $email, provider: $provider, confirmed: $confirmed, blocked: $blocked, phoneNumber: $phoneNumber, memberType: $memberType, fullName: $fullName, dateOfBirth: $dateOfBirth, dateStart: $dateStart, rate: $rate, description: $description, priority: $priority)';
   }
 
   @override
@@ -141,7 +141,7 @@ class User {
         o.confirmed == confirmed &&
         o.blocked == blocked &&
         o.phoneNumber == phoneNumber &&
-        o.userType == userType &&
+        o.memberType == memberType &&
         o.fullName == fullName &&
         o.dateOfBirth == dateOfBirth &&
         o.dateStart == dateStart &&
@@ -160,7 +160,7 @@ class User {
         confirmed.hashCode ^
         blocked.hashCode ^
         phoneNumber.hashCode ^
-        userType.hashCode ^
+        memberType.hashCode ^
         fullName.hashCode ^
         dateOfBirth.hashCode ^
         dateStart.hashCode ^
